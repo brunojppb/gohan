@@ -12,13 +12,13 @@ pub struct Lexer<'a> {
 
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
-        return Self {
+        Self {
             input,
             tokens: Vec::new(),
             start: 0,
             current: 0,
             line: 1,
-        };
+        }
     }
 
     pub fn scan(&mut self) -> &Vec<Token> {
@@ -51,10 +51,10 @@ impl<'a> Lexer<'a> {
             '\\' => self.add_token(TokenType::Backslash),
             '\t' => self.add_token(TokenType::Tab),
             '\n' => {
-                self.line = self.line + 1;
+                self.line += 1;
                 self.add_token(TokenType::Newline);
             }
-            c if c.is_digit(10) => {
+            c if c.is_ascii_digit() => {
                 self.add_token(TokenType::Number(c.to_digit(10).unwrap() as usize))
             }
             _ => self.handle_string(),
@@ -63,7 +63,7 @@ impl<'a> Lexer<'a> {
 
     fn is_token(&self, c: Option<char>) -> bool {
         let r = c
-            .filter(|c| c.is_digit(10) || SPECIAL_TOKENS.contains(*c))
+            .filter(|c| c.is_ascii_digit() || SPECIAL_TOKENS.contains(*c))
             .is_some();
         println!("c={:?} r={}", c, r);
         r
@@ -111,7 +111,7 @@ impl<'a> Lexer<'a> {
     /// to point to a potential next character
     fn advance(&mut self) -> Option<char> {
         let c = self.input.chars().nth(self.current);
-        self.current = self.current + 1;
+        self.current += 1;
         c
     }
 

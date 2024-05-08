@@ -21,6 +21,7 @@ impl Token {
 pub enum TokenType {
     Hash,
     Star,
+    Bang,
     Underscore,
     Newline,
     Tab,
@@ -34,6 +35,7 @@ impl TokenType {
         match self {
             Self::Hash => "#".to_string(),
             Self::Star => "*".to_string(),
+            Self::Bang => "!".to_string(),
             Self::Tab => "\\t".to_string(),
             Self::Space => " ".to_string(),
             Self::Newline => "\\n".to_string(),

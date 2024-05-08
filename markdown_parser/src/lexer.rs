@@ -37,6 +37,8 @@ impl<'a> Lexer<'a> {
         match c {
             '#' => self.add_token(TokenType::Hash),
             '*' => self.add_token(TokenType::Star),
+            '!' => self.add_token(TokenType::Bang),
+            ' ' => self.add_token(TokenType::Space),
             '_' => self.add_token(TokenType::Underscore),
             '\t' => self.add_token(TokenType::Tab),
             '\n' => {
@@ -48,25 +50,29 @@ impl<'a> Lexer<'a> {
     }
 
     fn is_string(&self, c: Option<char>) -> bool {
-        dbg!("char={}", c);
-        c.filter(|c| c.is_digit(10) || c == &'.' || c == &' ')
-            .is_some()
+        let r = c
+            .filter(|c| c.is_ascii_alphabetic() || c == &'.' || c == &' ')
+            .is_some();
+        println!("c={:?} r={}", c, r);
+        r
     }
 
     fn handle_string(&mut self) {
-        while self.is_string(self.peek()) {
-            dbg!("loop");
+        while !self.is_at_end() && self.is_string(self.peek()) {
             self.advance();
         }
-
-        dbg!("start={} current={}", self.start, self.current);
 
         let value: String = self
             .input
             .chars()
             .skip(self.start)
-            .take(self.current - 1)
+            .take(self.current - self.start)
             .collect();
+
+        println!(
+            "start={} current={} value='{}'",
+            self.start, self.current, value
+        );
 
         self.add_token(TokenType::Text(value));
     }
@@ -122,7 +128,10 @@ mod tests {
 
     #[test]
     fn parse_headers() {
-        let mut lexer = Lexer::new("### hi there!");
+        let markdown = "# Hi there
+This should be text _wrapped in underscore_
+";
+        let mut lexer = Lexer::new(markdown);
         let tokens = lexer.scan();
         println!("Tokens: {:#?}", tokens);
         assert_eq!(tokens.len(), 3);

@@ -3,5 +3,12 @@ name = "markdown_parser"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+serde = { version = "1.0.201", features = ["derive"] }
+
 [dev-dependencies]
-insta = "1"
+insta = { version = "1", features = ["glob", "json"] }
+
+[profile.dev.package]
+insta.opt-level = 3
+similar.opt-level = 3

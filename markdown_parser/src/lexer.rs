@@ -1,5 +1,7 @@
 use crate::token::{Token, TokenType};
 
+const SPECIAL_TOKENS: &str = "#*!_[]().- \n\t\\";
+
 pub struct Lexer<'a> {
     input: &'a str,
     tokens: Vec<Token>,
@@ -10,13 +12,13 @@ pub struct Lexer<'a> {
 
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
-        return Self {
+        Self {
             input,
             tokens: Vec::new(),
             start: 0,
             current: 0,
             line: 1,
-        };
+        }
     }
 
     pub fn scan(&mut self) -> &Vec<Token> {
@@ -40,25 +42,35 @@ impl<'a> Lexer<'a> {
             '!' => self.add_token(TokenType::Bang),
             ' ' => self.add_token(TokenType::Space),
             '_' => self.add_token(TokenType::Underscore),
+            '-' => self.add_token(TokenType::Dash),
+            '.' => self.add_token(TokenType::Dot),
+            '(' => self.add_token(TokenType::LeftParen),
+            ')' => self.add_token(TokenType::RightParen),
+            '[' => self.add_token(TokenType::LeftSquareBraket),
+            ']' => self.add_token(TokenType::RightSquareBraket),
+            '\\' => self.add_token(TokenType::Backslash),
             '\t' => self.add_token(TokenType::Tab),
             '\n' => {
-                self.line = self.line + 1;
+                self.line += 1;
                 self.add_token(TokenType::Newline);
+            }
+            c if c.is_ascii_digit() => {
+                self.add_token(TokenType::Number(c.to_digit(10).unwrap() as usize))
             }
             _ => self.handle_string(),
         }
     }
 
-    fn is_string(&self, c: Option<char>) -> bool {
+    fn is_token(&self, c: Option<char>) -> bool {
         let r = c
-            .filter(|c| c.is_ascii_alphabetic() || c == &'.' || c == &' ')
+            .filter(|c| c.is_ascii_digit() || SPECIAL_TOKENS.contains(*c))
             .is_some();
         println!("c={:?} r={}", c, r);
         r
     }
 
     fn handle_string(&mut self) {
-        while !self.is_at_end() && self.is_string(self.peek()) {
+        while !self.is_at_end() && !self.is_token(self.peek()) {
             self.advance();
         }
 
@@ -77,19 +89,6 @@ impl<'a> Lexer<'a> {
         self.add_token(TokenType::Text(value));
     }
 
-    fn match_next(&mut self, expected: char) -> bool {
-        if self.is_at_end() {
-            return false;
-        }
-
-        if self.peek() == Some(expected) {
-            self.advance();
-            return true;
-        }
-
-        false
-    }
-
     fn is_at_end(&self) -> bool {
         self.current >= self.input.len()
     }
@@ -98,11 +97,6 @@ impl<'a> Lexer<'a> {
         let token = Token::new(self.start, token_type, self.line);
 
         self.tokens.push(token);
-    }
-
-    // Look-up one character after the next, but do not consume it
-    fn peek_next(&self) -> Option<char> {
-        self.input.chars().nth(self.current + 1)
     }
 
     /// Look-up the next character, but do not consume it
@@ -117,23 +111,41 @@ impl<'a> Lexer<'a> {
     /// to point to a potential next character
     fn advance(&mut self) -> Option<char> {
         let c = self.input.chars().nth(self.current);
-        self.current = self.current + 1;
+        self.current += 1;
         c
     }
+
+    // Look-up one character after the next, but do not consume it
+    // fn peek_next(&self) -> Option<char> {
+    //     self.input.chars().nth(self.current + 1)
+    // }
+    //
+    // fn match_next(&mut self, expected: char) -> bool {
+    //     if self.is_at_end() {
+    //         return false;
+    //     }
+
+    //     if self.peek() == Some(expected) {
+    //         self.advance();
+    //         return true;
+    //     }
+
+    //     false
+    // }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use super::*;
 
     #[test]
     fn parse_headers() {
-        let markdown = "# Hi there
-This should be text _wrapped in underscore_
-";
-        let mut lexer = Lexer::new(markdown);
-        let tokens = lexer.scan();
-        // @TODO: Replace this with snapshot testing via insta
-        assert_eq!(tokens.len(), 10);
+        insta::glob!("snapshot_inputs/*.md", |path| {
+            let markdown = fs::read_to_string(path).unwrap();
+            let mut lexer = Lexer::new(&markdown);
+            insta::assert_json_snapshot!(lexer.scan());
+        });
     }
 }

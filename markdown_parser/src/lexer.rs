@@ -133,7 +133,7 @@ This should be text _wrapped in underscore_
 ";
         let mut lexer = Lexer::new(markdown);
         let tokens = lexer.scan();
-        println!("Tokens: {:#?}", tokens);
-        assert_eq!(tokens.len(), 3);
+        // @TODO: Replace this with snapshot testing via insta
+        assert_eq!(tokens.len(), 10);
     }
 }

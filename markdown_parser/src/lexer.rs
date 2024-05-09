@@ -141,7 +141,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_headers() {
+    fn tokenize_markdown() {
         insta::glob!("snapshot_inputs/*.md", |path| {
             let markdown = fs::read_to_string(path).unwrap();
             let mut lexer = Lexer::new(&markdown);

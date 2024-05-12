@@ -323,11 +323,71 @@ input_file: markdown_parser/src/snapshot_inputs/lexer_input.md
   },
   {
     "position": 134,
+    "kind": "Space",
+    "line": 4
+  },
+  {
+    "position": 135,
+    "kind": {
+      "Text": "and"
+    },
+    "line": 4
+  },
+  {
+    "position": 138,
+    "kind": "Space",
+    "line": 4
+  },
+  {
+    "position": 139,
+    "kind": {
+      "Text": "text"
+    },
+    "line": 4
+  },
+  {
+    "position": 143,
+    "kind": "Space",
+    "line": 4
+  },
+  {
+    "position": 144,
+    "kind": {
+      "Text": "after"
+    },
+    "line": 4
+  },
+  {
+    "position": 149,
+    "kind": "Space",
+    "line": 4
+  },
+  {
+    "position": 150,
+    "kind": {
+      "Text": "the"
+    },
+    "line": 4
+  },
+  {
+    "position": 153,
+    "kind": "Space",
+    "line": 4
+  },
+  {
+    "position": 154,
+    "kind": {
+      "Text": "link"
+    },
+    "line": 4
+  },
+  {
+    "position": 158,
     "kind": "Newline",
     "line": 5
   },
   {
-    "position": 134,
+    "position": 158,
     "kind": "EndOfFile",
     "line": 5
   }

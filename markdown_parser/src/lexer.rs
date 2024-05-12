@@ -2,9 +2,10 @@ use crate::token::{Token, TokenType};
 
 const SPECIAL_TOKENS: &str = "#*!_[]().- \n\t\\";
 
+/// Tokenizes Markdown input
 pub struct Lexer<'a> {
-    input: &'a str,
-    tokens: Vec<Token>,
+    source: &'a str,
+    tokens: Vec<Token<'a>>,
     start: usize,
     current: usize,
     line: usize,
@@ -13,7 +14,7 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
-            input,
+            source: input,
             tokens: Vec::new(),
             start: 0,
             current: 0,
@@ -74,26 +75,17 @@ impl<'a> Lexer<'a> {
             self.advance();
         }
 
-        let value: String = self
-            .input
-            .chars()
-            .skip(self.start)
-            .take(self.current - self.start)
-            .collect();
-
-        println!(
-            "start={} current={} value='{}'",
-            self.start, self.current, value
-        );
+        let sub_str_offset = self.start + (self.current - self.start);
+        let value = &self.source[self.start..sub_str_offset];
 
         self.add_token(TokenType::Text(value));
     }
 
     fn is_at_end(&self) -> bool {
-        self.current >= self.input.len()
+        self.current >= self.source.len()
     }
 
-    fn add_token(&mut self, token_type: TokenType) {
+    fn add_token(&mut self, token_type: TokenType<'a>) {
         let token = Token::new(self.start, token_type, self.line);
 
         self.tokens.push(token);
@@ -104,13 +96,13 @@ impl<'a> Lexer<'a> {
         if self.is_at_end() {
             return None;
         }
-        self.input.chars().nth(self.current)
+        self.source.chars().nth(self.current)
     }
 
     /// Consume the next character and advance the needle
     /// to point to a potential next character
     fn advance(&mut self) -> Option<char> {
-        let c = self.input.chars().nth(self.current);
+        let c = self.source.chars().nth(self.current);
         self.current += 1;
         c
     }

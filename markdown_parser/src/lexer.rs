@@ -1,33 +1,36 @@
-use crate::token::{Token, TokenType};
+use crate::token::{Span, Token};
 
-const SPECIAL_TOKENS: &str = "#*!_[]().- \n\t\\";
+const SYMBOLS: &str = "#*!_[]().- \n\t\\";
 
+/// Tokenizes Markdown input
 pub struct Lexer<'a> {
-    input: &'a str,
-    tokens: Vec<Token>,
+    source: &'a str,
+    tokens: Vec<(Token<'a>, Span)>,
     start: usize,
     current: usize,
+    col: usize,
     line: usize,
 }
 
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
-            input,
+            source: input,
             tokens: Vec::new(),
             start: 0,
             current: 0,
             line: 1,
+            col: 0,
         }
     }
 
-    pub fn scan(&mut self) -> &Vec<Token> {
+    pub fn scan(&mut self) -> &Vec<(Token<'a>, Span)> {
         while !self.is_at_end() {
             self.start = self.current;
             self.scan_token();
         }
 
-        self.add_token(TokenType::EndOfFile);
+        self.add_token(Token::EndOfFile);
         &self.tokens
     }
 
@@ -37,36 +40,34 @@ impl<'a> Lexer<'a> {
         };
 
         match c {
-            '#' => self.add_token(TokenType::Hash),
-            '*' => self.add_token(TokenType::Star),
-            '!' => self.add_token(TokenType::Bang),
-            ' ' => self.add_token(TokenType::Space),
-            '_' => self.add_token(TokenType::Underscore),
-            '-' => self.add_token(TokenType::Dash),
-            '.' => self.add_token(TokenType::Dot),
-            '(' => self.add_token(TokenType::LeftParen),
-            ')' => self.add_token(TokenType::RightParen),
-            '[' => self.add_token(TokenType::LeftSquareBraket),
-            ']' => self.add_token(TokenType::RightSquareBraket),
-            '\\' => self.add_token(TokenType::Backslash),
-            '\t' => self.add_token(TokenType::Tab),
+            '#' => self.add_token(Token::Hash),
+            '*' => self.add_token(Token::Star),
+            '!' => self.add_token(Token::Bang),
+            ' ' => self.add_token(Token::Space),
+            '_' => self.add_token(Token::Underscore),
+            '-' => self.add_token(Token::Dash),
+            '.' => self.add_token(Token::Dot),
+            '(' => self.add_token(Token::LeftParen),
+            ')' => self.add_token(Token::RightParen),
+            '[' => self.add_token(Token::LeftSquareBracket),
+            ']' => self.add_token(Token::RightSquareBracket),
+            '\\' => self.add_token(Token::Backslash),
+            '\t' => self.add_token(Token::Tab),
             '\n' => {
                 self.line += 1;
-                self.add_token(TokenType::Newline);
+                self.col = 0;
+                self.add_token(Token::Newline);
             }
             c if c.is_ascii_digit() => {
-                self.add_token(TokenType::Number(c.to_digit(10).unwrap() as usize))
+                self.add_token(Token::Digit(&self.source[self.current..self.current + 1]))
             }
             _ => self.handle_string(),
         }
     }
 
     fn is_token(&self, c: Option<char>) -> bool {
-        let r = c
-            .filter(|c| c.is_ascii_digit() || SPECIAL_TOKENS.contains(*c))
-            .is_some();
-        println!("c={:?} r={}", c, r);
-        r
+        c.filter(|c| c.is_ascii_digit() || SYMBOLS.contains(*c))
+            .is_some()
     }
 
     fn handle_string(&mut self) {
@@ -74,29 +75,23 @@ impl<'a> Lexer<'a> {
             self.advance();
         }
 
-        let value: String = self
-            .input
-            .chars()
-            .skip(self.start)
-            .take(self.current - self.start)
-            .collect();
+        let sub_str_offset = self.start + (self.current - self.start);
+        let value = &self.source[self.start..sub_str_offset];
 
-        println!(
-            "start={} current={} value='{}'",
-            self.start, self.current, value
-        );
-
-        self.add_token(TokenType::Text(value));
+        self.add_token(Token::Text(value));
     }
 
     fn is_at_end(&self) -> bool {
-        self.current >= self.input.len()
+        self.current >= self.source.len()
     }
 
-    fn add_token(&mut self, token_type: TokenType) {
-        let token = Token::new(self.start, token_type, self.line);
-
-        self.tokens.push(token);
+    fn add_token(&mut self, token: Token<'a>) {
+        // let token = Token::new(self.start, token_type, self.line);
+        let span = Span {
+            line: self.line,
+            col: self.col,
+        };
+        self.tokens.push((token, span));
     }
 
     /// Look-up the next character, but do not consume it
@@ -104,14 +99,15 @@ impl<'a> Lexer<'a> {
         if self.is_at_end() {
             return None;
         }
-        self.input.chars().nth(self.current)
+        self.source.chars().nth(self.current)
     }
 
     /// Consume the next character and advance the needle
     /// to point to a potential next character
     fn advance(&mut self) -> Option<char> {
-        let c = self.input.chars().nth(self.current);
+        let c = self.source.chars().nth(self.current);
         self.current += 1;
+        self.col += 1;
         c
     }
 
@@ -120,18 +116,6 @@ impl<'a> Lexer<'a> {
     //     self.input.chars().nth(self.current + 1)
     // }
     //
-    // fn match_next(&mut self, expected: char) -> bool {
-    //     if self.is_at_end() {
-    //         return false;
-    //     }
-
-    //     if self.peek() == Some(expected) {
-    //         self.advance();
-    //         return true;
-    //     }
-
-    //     false
-    // }
 }
 
 #[cfg(test)]
@@ -141,7 +125,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_headers() {
+    fn tokenize_markdown() {
         insta::glob!("snapshot_inputs/*.md", |path| {
             let markdown = fs::read_to_string(path).unwrap();
             let mut lexer = Lexer::new(&markdown);

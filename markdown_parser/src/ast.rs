@@ -1,11 +1,27 @@
-use crate::token::Token;
+use serde::{Deserialize, Serialize};
 
-pub enum InlineNode {
-    Span(String),
-    Link { text: String, url: String },
+#[derive(Debug, Serialize, Deserialize)]
+pub enum Node<'s> {
+    #[serde(borrow)]
+    Block(BlockNode<'s>),
+    Inline(InlineNode<'s>),
 }
 
-pub enum BlockNode {
-    Heading(InlineNode),
-    Paragraph(Vec<InlineNode>),
+/// Block level elements
+#[derive(Debug, Serialize, Deserialize)]
+pub enum BlockNode<'s> {
+    Heading(u8, Vec<InlineNode<'s>>), // (heading level, elements)
+    #[serde(borrow)]
+    Paragraph(Vec<InlineNode<'s>>),
+}
+
+/// inline level elements
+#[derive(Debug, Serialize, Deserialize)]
+pub enum InlineNode<'s> {
+    Bold(Vec<InlineNode<'s>>),
+    Italic(Vec<InlineNode<'s>>),
+    Link(Vec<InlineNode<'s>>, Vec<InlineNode<'s>>), // (elements, url)
+    Digit(usize),
+    Text(&'s str),
+    LineBreak,
 }

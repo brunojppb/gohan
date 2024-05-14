@@ -12,3 +12,5 @@ This is a learning project of mine that I aim to use to generate my own websites
 - [ ] Markdown to HTML compiler
 - [ ] Syntax highlighting for the most common languages I use
 - [ ] Support for templates
+
+test [this[**other\]\]** what

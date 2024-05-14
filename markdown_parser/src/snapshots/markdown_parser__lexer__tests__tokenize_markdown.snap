@@ -4,391 +4,525 @@ expression: lexer.scan()
 input_file: markdown_parser/src/snapshot_inputs/lexer_input.md
 ---
 [
-  {
-    "position": 0,
-    "kind": "Hash",
-    "line": 1
-  },
-  {
-    "position": 1,
-    "kind": "Space",
-    "line": 1
-  },
-  {
-    "position": 2,
-    "kind": {
+  [
+    "Hash",
+    {
+      "line": 1,
+      "col": 1
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 1,
+      "col": 2
+    }
+  ],
+  [
+    {
       "Text": "Hi"
     },
-    "line": 1
-  },
-  {
-    "position": 4,
-    "kind": "Space",
-    "line": 1
-  },
-  {
-    "position": 5,
-    "kind": {
+    {
+      "line": 1,
+      "col": 4
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 1,
+      "col": 5
+    }
+  ],
+  [
+    {
       "Text": "there"
     },
-    "line": 1
-  },
-  {
-    "position": 10,
-    "kind": "Newline",
-    "line": 2
-  },
-  {
-    "position": 11,
-    "kind": "Newline",
-    "line": 3
-  },
-  {
-    "position": 12,
-    "kind": {
+    {
+      "line": 1,
+      "col": 10
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 2,
+      "col": 0
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 3,
+      "col": 0
+    }
+  ],
+  [
+    {
       "Text": "This"
     },
-    "line": 3
-  },
-  {
-    "position": 16,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 17,
-    "kind": {
+    {
+      "line": 3,
+      "col": 4
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 5
+    }
+  ],
+  [
+    {
       "Text": "should"
     },
-    "line": 3
-  },
-  {
-    "position": 23,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 24,
-    "kind": {
+    {
+      "line": 3,
+      "col": 11
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 12
+    }
+  ],
+  [
+    {
       "Text": "be"
     },
-    "line": 3
-  },
-  {
-    "position": 26,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 27,
-    "kind": {
+    {
+      "line": 3,
+      "col": 14
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 15
+    }
+  ],
+  [
+    {
       "Text": "text"
     },
-    "line": 3
-  },
-  {
-    "position": 31,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 32,
-    "kind": "Underscore",
-    "line": 3
-  },
-  {
-    "position": 33,
-    "kind": {
+    {
+      "line": 3,
+      "col": 19
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 20
+    }
+  ],
+  [
+    "Underscore",
+    {
+      "line": 3,
+      "col": 21
+    }
+  ],
+  [
+    {
       "Text": "wrapped"
     },
-    "line": 3
-  },
-  {
-    "position": 40,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 41,
-    "kind": {
+    {
+      "line": 3,
+      "col": 28
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 29
+    }
+  ],
+  [
+    {
       "Text": "in"
     },
-    "line": 3
-  },
-  {
-    "position": 43,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 44,
-    "kind": {
+    {
+      "line": 3,
+      "col": 31
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 32
+    }
+  ],
+  [
+    {
       "Text": "underscore"
     },
-    "line": 3
-  },
-  {
-    "position": 54,
-    "kind": "Underscore",
-    "line": 3
-  },
-  {
-    "position": 55,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 56,
-    "kind": {
+    {
+      "line": 3,
+      "col": 42
+    }
+  ],
+  [
+    "Underscore",
+    {
+      "line": 3,
+      "col": 43
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 44
+    }
+  ],
+  [
+    {
       "Text": "and"
     },
-    "line": 3
-  },
-  {
-    "position": 59,
-    "kind": "Space",
-    "line": 3
-  },
-  {
-    "position": 60,
-    "kind": "Backslash",
-    "line": 3
-  },
-  {
-    "position": 61,
-    "kind": "Backslash",
-    "line": 3
-  },
-  {
-    "position": 62,
-    "kind": {
+    {
+      "line": 3,
+      "col": 47
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 48
+    }
+  ],
+  [
+    "Backslash",
+    {
+      "line": 3,
+      "col": 49
+    }
+  ],
+  [
+    "Backslash",
+    {
+      "line": 3,
+      "col": 50
+    }
+  ],
+  [
+    {
       "Text": "escaped"
     },
-    "line": 3
-  },
-  {
-    "position": 69,
-    "kind": "Newline",
-    "line": 4
-  },
-  {
-    "position": 70,
-    "kind": "Star",
-    "line": 4
-  },
-  {
-    "position": 71,
-    "kind": "Star",
-    "line": 4
-  },
-  {
-    "position": 72,
-    "kind": {
+    {
+      "line": 3,
+      "col": 57
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 4,
+      "col": 0
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 1
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 2
+    }
+  ],
+  [
+    {
       "Text": "bold"
     },
-    "line": 4
-  },
-  {
-    "position": 76,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 77,
-    "kind": {
+    {
+      "line": 4,
+      "col": 6
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 7
+    }
+  ],
+  [
+    {
       "Text": "text"
     },
-    "line": 4
-  },
-  {
-    "position": 81,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 82,
-    "kind": {
+    {
+      "line": 4,
+      "col": 11
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 12
+    }
+  ],
+  [
+    {
       "Text": "here"
     },
-    "line": 4
-  },
-  {
-    "position": 86,
-    "kind": "Star",
-    "line": 4
-  },
-  {
-    "position": 87,
-    "kind": "Star",
-    "line": 4
-  },
-  {
-    "position": 88,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 89,
-    "kind": {
+    {
+      "line": 4,
+      "col": 16
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 17
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 18
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 19
+    }
+  ],
+  [
+    {
       "Text": "with"
     },
-    "line": 4
-  },
-  {
-    "position": 93,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 94,
-    "kind": {
+    {
+      "line": 4,
+      "col": 23
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 24
+    }
+  ],
+  [
+    {
       "Text": "a"
     },
-    "line": 4
-  },
-  {
-    "position": 95,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 96,
-    "kind": {
+    {
+      "line": 4,
+      "col": 25
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 26
+    }
+  ],
+  [
+    {
       "Text": "nice"
     },
-    "line": 4
-  },
-  {
-    "position": 100,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 101,
-    "kind": "LeftSquareBraket",
-    "line": 4
-  },
-  {
-    "position": 102,
-    "kind": {
+    {
+      "line": 4,
+      "col": 30
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 31
+    }
+  ],
+  [
+    "LeftSquareBracket",
+    {
+      "line": 4,
+      "col": 32
+    }
+  ],
+  [
+    {
       "Text": "link"
     },
-    "line": 4
-  },
-  {
-    "position": 106,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 107,
-    "kind": {
+    {
+      "line": 4,
+      "col": 36
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 37
+    }
+  ],
+  [
+    {
       "Text": "here"
     },
-    "line": 4
-  },
-  {
-    "position": 111,
-    "kind": "RightSquareBraket",
-    "line": 4
-  },
-  {
-    "position": 112,
-    "kind": "LeftParen",
-    "line": 4
-  },
-  {
-    "position": 113,
-    "kind": {
+    {
+      "line": 4,
+      "col": 41
+    }
+  ],
+  [
+    "RightSquareBracket",
+    {
+      "line": 4,
+      "col": 42
+    }
+  ],
+  [
+    "LeftParen",
+    {
+      "line": 4,
+      "col": 43
+    }
+  ],
+  [
+    {
       "Text": "https://bpaulino"
     },
-    "line": 4
-  },
-  {
-    "position": 129,
-    "kind": "Dot",
-    "line": 4
-  },
-  {
-    "position": 130,
-    "kind": {
+    {
+      "line": 4,
+      "col": 59
+    }
+  ],
+  [
+    "Dot",
+    {
+      "line": 4,
+      "col": 60
+    }
+  ],
+  [
+    {
       "Text": "com"
     },
-    "line": 4
-  },
-  {
-    "position": 133,
-    "kind": "RightParen",
-    "line": 4
-  },
-  {
-    "position": 134,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 135,
-    "kind": {
+    {
+      "line": 4,
+      "col": 63
+    }
+  ],
+  [
+    "RightParen",
+    {
+      "line": 4,
+      "col": 64
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 65
+    }
+  ],
+  [
+    {
       "Text": "and"
     },
-    "line": 4
-  },
-  {
-    "position": 138,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 139,
-    "kind": {
+    {
+      "line": 4,
+      "col": 68
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 69
+    }
+  ],
+  [
+    {
       "Text": "text"
     },
-    "line": 4
-  },
-  {
-    "position": 143,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 144,
-    "kind": {
+    {
+      "line": 4,
+      "col": 73
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 74
+    }
+  ],
+  [
+    {
       "Text": "after"
     },
-    "line": 4
-  },
-  {
-    "position": 149,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 150,
-    "kind": {
+    {
+      "line": 4,
+      "col": 79
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 80
+    }
+  ],
+  [
+    {
       "Text": "the"
     },
-    "line": 4
-  },
-  {
-    "position": 153,
-    "kind": "Space",
-    "line": 4
-  },
-  {
-    "position": 154,
-    "kind": {
+    {
+      "line": 4,
+      "col": 83
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 84
+    }
+  ],
+  [
+    {
       "Text": "link"
     },
-    "line": 4
-  },
-  {
-    "position": 158,
-    "kind": "Newline",
-    "line": 5
-  },
-  {
-    "position": 158,
-    "kind": "EndOfFile",
-    "line": 5
-  }
+    {
+      "line": 4,
+      "col": 88
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 5,
+      "col": 0
+    }
+  ],
+  [
+    "EndOfFile",
+    {
+      "line": 5,
+      "col": 0
+    }
+  ]
 ]

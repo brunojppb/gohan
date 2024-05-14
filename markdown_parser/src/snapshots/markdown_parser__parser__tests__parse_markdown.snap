@@ -1,0 +1,192 @@
+---
+source: markdown_parser/src/parser.rs
+expression: ast
+input_file: markdown_parser/src/snapshot_inputs/lexer_input.md
+---
+[
+  {
+    "Block": {
+      "Heading": [
+        1,
+        [
+          {
+            "Text": "Hi"
+          },
+          {
+            "Text": " "
+          },
+          {
+            "Text": "there"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "Block": {
+      "Paragraph": [
+        {
+          "Text": "This"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "should"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "be"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "text"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "_"
+        },
+        {
+          "Text": "wrapped"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "in"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "underscore"
+        },
+        {
+          "Text": "_"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "and"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "\\"
+        },
+        {
+          "Text": "\\"
+        },
+        {
+          "Text": "escaped"
+        },
+        "LineBreak",
+        {
+          "Bold": [
+            {
+              "Text": "bold"
+            },
+            {
+              "Text": " "
+            },
+            {
+              "Text": "text"
+            },
+            {
+              "Text": " "
+            },
+            {
+              "Text": "here"
+            }
+          ]
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "with"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "a"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "nice"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Link": [
+            [
+              {
+                "Text": "link"
+              },
+              {
+                "Text": " "
+              },
+              {
+                "Text": "here"
+              }
+            ],
+            [
+              {
+                "Text": "https://bpaulino"
+              },
+              {
+                "Text": "."
+              },
+              {
+                "Text": "com"
+              }
+            ]
+          ]
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "and"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "text"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "after"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "the"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "link"
+        },
+        "LineBreak"
+      ]
+    }
+  }
+]

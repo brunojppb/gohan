@@ -1,0 +1,6 @@
+---
+source: md_parser/src/renderer.rs
+expression: result
+input_file: md_parser/src/snapshot_inputs/lexer_input.md
+---
+"<h1>Hi there</h1><p>This should be text _wrapped in underscore_ and \\\\escaped<br><strong>bold text here</strong> with a nice <a href=\"https://bpaulino.com\">link here</a> and text after the link<br></p>"

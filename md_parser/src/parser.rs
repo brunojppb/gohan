@@ -102,7 +102,10 @@ impl<'source> Parser<'source> {
 
     fn paragraph(&mut self) -> Node<'source> {
         // A paragraph might or might not start with a newline
-        while self.match_token(Token::Newline) && !self.is_at_end() {
+        // @TODO: Add newlines before paragraphs as linebreak nodes?
+        // So we just consume newlines outside of a paragraph and discard them.
+        // I might need to revisit this and add Linebreak as a inline node?
+        while self.check(Token::Newline) && !self.is_at_end() {
             self.consume(Token::Newline);
         }
 
@@ -200,8 +203,8 @@ impl<'source> Parser<'source> {
             }
 
             panic!(
-                "Invalid next token to consume. expected={:#?} found={:#?}",
-                kind, token.0
+                "Invalid next token to consume. expected={:#?} found={:#?} span={:#?}",
+                kind, token.0, token.1
             );
         }
 

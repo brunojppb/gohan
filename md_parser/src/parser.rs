@@ -69,21 +69,23 @@ impl<'source> Parser<'source> {
     pub fn parse(&mut self) -> Vec<Node<'source>> {
         let mut nodes: Vec<Node<'source>> = Vec::new();
         while !self.is_at_end() {
-            nodes.push(self.block());
+            if let Some(node) = self.block() {
+                nodes.push(node);
+            }
         }
 
         nodes
     }
 
-    fn block(&mut self) -> Node<'source> {
+    fn block(&mut self) -> Option<Node<'source>> {
         if self.match_token(Token::Hash) {
             return self.maybe_heading();
         }
 
-        self.paragraph()
+        self.maybe_paragraph()
     }
 
-    fn maybe_heading(&mut self) -> Node<'source> {
+    fn maybe_heading(&mut self) -> Option<Node<'source>> {
         let mut heading_level: u8 = 1;
         while self.match_token(Token::Hash) {
             heading_level += 1;
@@ -94,15 +96,21 @@ impl<'source> Parser<'source> {
             while let Some(inline) = self.inline() {
                 inline_elements.push(inline)
             }
-            return Node::Block(BlockNode::Heading(heading_level, inline_elements));
+            return Some(Node::Block(BlockNode::Heading(
+                heading_level,
+                inline_elements,
+            )));
         }
 
-        return self.paragraph();
+        self.maybe_paragraph()
     }
 
-    fn paragraph(&mut self) -> Node<'source> {
+    fn maybe_paragraph(&mut self) -> Option<Node<'source>> {
         // A paragraph might or might not start with a newline
-        while self.match_token(Token::Newline) && !self.is_at_end() {
+        // @TODO: Add newlines before paragraphs as linebreak nodes?
+        // So we just consume newlines outside of a paragraph and discard them.
+        // I might need to revisit this and add Linebreak as a inline node?
+        while self.check(Token::Newline) && !self.is_at_end() {
             self.consume(Token::Newline);
         }
 
@@ -111,7 +119,12 @@ impl<'source> Parser<'source> {
         while let Some(inline) = self.inline() {
             inline_elements.push(inline);
         }
-        Node::Block(BlockNode::Paragraph(inline_elements))
+
+        if inline_elements.is_empty() {
+            return None;
+        }
+
+        Some(Node::Block(BlockNode::Paragraph(inline_elements)))
     }
 
     fn inline(&mut self) -> Option<InlineNode<'source>> {
@@ -200,8 +213,8 @@ impl<'source> Parser<'source> {
             }
 
             panic!(
-                "Invalid next token to consume. expected={:#?} found={:#?}",
-                kind, token.0
+                "Invalid next token to consume. expected={:#?} found={:#?} span={:#?}",
+                kind, token.0, token.1
             );
         }
 

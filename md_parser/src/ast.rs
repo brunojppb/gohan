@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Node<'s> {
     #[serde(borrow)]
     Block(BlockNode<'s>),
@@ -8,7 +8,7 @@ pub enum Node<'s> {
 }
 
 /// Block level elements
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum BlockNode<'s> {
     Heading(u8, Vec<InlineNode<'s>>), // (heading level, elements)
     #[serde(borrow)]
@@ -16,7 +16,7 @@ pub enum BlockNode<'s> {
 }
 
 /// inline level elements
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum InlineNode<'s> {
     Bold(Vec<InlineNode<'s>>),
     Italic(Vec<InlineNode<'s>>),

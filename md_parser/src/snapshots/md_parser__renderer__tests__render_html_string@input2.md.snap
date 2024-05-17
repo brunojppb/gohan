@@ -1,0 +1,6 @@
+---
+source: md_parser/src/renderer.rs
+expression: result
+input_file: md_parser/src/snapshot_inputs/input2.md
+---
+"<h3>Article of the week</h3><p>In my walks around the <a href=\"https://www.praterwien.com/en/home\">Prater Park</a> I've been very<br>happy to be able to enjoy nature in it's true form across all the <strong>seasons</strong>.</p><p>Particularly during summer where it's all <strong>green</strong> and beautiful.</p>"

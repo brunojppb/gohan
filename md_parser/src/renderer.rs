@@ -10,14 +10,9 @@ use crate::{
 ///
 /// ```
 /// use md_parser::renderer;
-/// let markdown = r#"
-/// ## Title
-///
-/// I'm a **paragraph**.
-/// "#;
+/// let markdown = r"I'm a **paragraph**.";
 /// let html = renderer::render_html(markdown);
-/// println!("{}", html);
-/// // <h2>Title</h2><p>I'm a <strong>paragraph</strong>.</p>
+/// assert_eq!(html, "<p>I'm a <strong>paragraph</strong>.</p>");
 /// ```
 pub fn render_html(markdown: &str) -> String {
     let mut lexer = Lexer::new(markdown);
@@ -50,7 +45,15 @@ fn visit_block(buffer: &mut String, node: &BlockNode) {
         }
         BlockNode::Paragraph(inline_nodes) => {
             buffer.push_str("<p>");
-            visit_inline_nodes(buffer, inline_nodes);
+            for (idx, node) in inline_nodes.iter().enumerate() {
+                // Within a paragraph, whenever we hit the last node
+                // and it's a newline, we can just discard it as the
+                // paragraph element behaves itself as a block.
+                if idx >= inline_nodes.len() - 1 && node == &InlineNode::LineBreak {
+                    continue;
+                }
+                visit_inline(buffer, node);
+            }
             buffer.push_str("</p>");
         }
     }
@@ -100,5 +103,19 @@ mod tests {
             let result = render_html(&markdown);
             insta::assert_json_snapshot!(result);
         });
+    }
+
+    #[test]
+    fn render_plan() {
+        let markdown = r"
+## Title
+
+I'm a **paragraph**.
+";
+        let html = render_html(markdown);
+        assert_eq!(
+            html,
+            "<h2>Title</h2><p>I'm a <strong>paragraph</strong>.</p>"
+        );
     }
 }

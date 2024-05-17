@@ -1,7 +1,7 @@
 ---
-source: markdown_parser/src/lexer.rs
+source: md_parser/src/lexer.rs
 expression: lexer.scan()
-input_file: markdown_parser/src/snapshot_inputs/lexer_input.md
+input_file: md_parser/src/snapshot_inputs/lexer_input.md
 ---
 [
   [

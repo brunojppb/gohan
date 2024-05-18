@@ -1,0 +1,9 @@
+[package]
+name = "web_repl"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
+
+[dev-dependencies]

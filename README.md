@@ -8,7 +8,8 @@
 
 This is a learning project of mine that I aim to use to generate my own websites. I am going to slowly work on the following features:
 
-- Markdown lexer and parser
+- Markdown Lexer and Parser
 - Markdown to HTML compiler
+- Web app compiled to WebAssembly to demo the parser/compiler
 - Syntax highlighting for the most common languages I use
 - Support for templating

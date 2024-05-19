@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["md_parser"]
+members = ["md_parser", "web_repl"]
 
 [profile.dev.package]
 insta.opt-level = 3

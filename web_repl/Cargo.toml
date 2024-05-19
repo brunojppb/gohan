@@ -1,0 +1,10 @@
+[package]
+name = "web_repl"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
+md_parser = { path = "../md_parser" }
+wasm-bindgen = "0.2"
+web-sys = "0.3.69"

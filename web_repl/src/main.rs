@@ -4,15 +4,25 @@ use yew::prelude::*;
 
 use md_parser::renderer::render_html;
 
+const INITIAL_MD: &str = r"## Hello from Gohan!
+
+Gohan is a [Rust-based](https://www.rust-lang.org/) markdown parser and HTML compiler.
+Give it a **try!**.
+";
+
 #[function_component(App)]
 fn app() -> Html {
-    let rendered_html_handle = use_state(String::default);
-    let html_value = (*rendered_html_handle).clone();
+    let rendered_html_handle = use_state(|| render_html(INITIAL_MD));
+    let html_value: String = (*rendered_html_handle).clone();
+
+    let input_value_handle = use_state(|| INITIAL_MD.to_string());
+    let input_value: String = (*input_value_handle).clone();
 
     let rendered_html = Html::from_html_unchecked(AttrValue::from(html_value));
 
     let on_cautious_change = {
         let html_value = rendered_html_handle.clone();
+        let input_value = input_value_handle.clone();
 
         Callback::from(move |e: KeyboardEvent| {
             // When events are created the target is undefined, it's only
@@ -25,6 +35,7 @@ fn app() -> Html {
             if let Some(input) = input {
                 let h = render_html(&input.value());
                 html_value.set(h);
+                input_value.set(input.value());
             }
         })
     };
@@ -44,6 +55,7 @@ fn app() -> Html {
             <div class="grid grid-cols-2 gap-8 mt-2">
                 <textarea
                     onkeyup={on_cautious_change}
+                    value={input_value}
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                 <article class="p-2 prose lg:prose-xl rounded-lg border border-gray-300 dark:border-gray-600 dark:prose-invert">
                     {rendered_html}

@@ -20,7 +20,7 @@ fn app() -> Html {
 
     let rendered_html = Html::from_html_unchecked(AttrValue::from(html_value));
 
-    let on_cautious_change = {
+    let on_change = {
         let html_value = rendered_html_handle.clone();
         let input_value = input_value_handle.clone();
 
@@ -54,7 +54,7 @@ fn app() -> Html {
 
             <div class="grid grid-cols-2 gap-8 mt-2">
                 <textarea
-                    onkeyup={on_cautious_change}
+                    onkeyup={on_change}
                     value={input_value}
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                 <article class="p-2 prose lg:prose-xl rounded-lg border border-gray-300 dark:border-gray-600 dark:prose-invert">

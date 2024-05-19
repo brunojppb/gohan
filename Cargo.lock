@@ -1227,6 +1227,8 @@ name = "web_repl"
 version = "0.0.1"
 dependencies = [
  "md_parser",
+ "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
 

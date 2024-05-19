@@ -218,7 +218,7 @@ impl<'source> Parser<'source> {
             );
         }
 
-        panic!("Could not consume next token.")
+        panic!("Could not consume next token kind={}", kind)
     }
 
     fn advance(&mut self) -> Option<&(Token<'source>, Span)> {

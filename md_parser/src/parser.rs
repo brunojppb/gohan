@@ -148,6 +148,7 @@ impl<'source> Parser<'source> {
                 | Token::Dash
                 | Token::Dot
                 | Token::Underscore
+                | Token::Bang
                 | Token::Backslash => InlineNode::Text(token.literal()),
                 t if t.is_block_level_token() => return None,
                 t => todo!("unhandled token: {}", t),

@@ -32,7 +32,7 @@ fn app() -> Html {
     html! {
         <>
             <div>
-                <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl dark:text-white">
+                <h1 class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">{"Gohan - Markdown Parser"}</span>
                 </h1>
             </div>

@@ -59,7 +59,7 @@ impl<'a> Lexer<'a> {
                 self.add_token(Token::Newline);
             }
             c if c.is_ascii_digit() => {
-                self.add_token(Token::Digit(&self.source[self.current..self.current + 1]))
+                self.add_token(Token::Digit(&self.source[self.current - 1..self.current]))
             }
             _ => self.handle_string(),
         }

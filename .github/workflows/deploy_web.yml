@@ -1,0 +1,29 @@
+name: Deploy Web
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: Build WASM build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          targets: wasm32-unknown-unknown
+
+      - name: Install Trunk
+        run: cargo install trunk
+
+      - name: Build
+        run: trunk build --release
+        working-directory: ./web_repl
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: |
+            web_repl/dist

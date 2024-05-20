@@ -68,11 +68,6 @@ impl<'a> Lexer<'a> {
         match c {
             Some(c) => {
                 if c.is_ascii() {
-                    println!(
-                        "symbol={} contains={}",
-                        c as char,
-                        SYMBOLS.contains(c as char)
-                    );
                     c.is_ascii_digit() || SYMBOLS.contains(c as char)
                 } else {
                     false
@@ -86,20 +81,11 @@ impl<'a> Lexer<'a> {
         let start_offset = self.current_byte_offset - 1;
         let mut end_byte_offset = start_offset;
         while !self.is_at_end() && !self.is_token(self.peek()) {
-            let value = self.advance();
-            println!(
-                "Advancing a byte value={:#?} peek={:#?}",
-                value.map(|c| c as char),
-                self.peek().map(|c| c as char)
-            );
+            self.advance();
             end_byte_offset += 1;
         }
 
         let value = &self.source[start_offset..end_byte_offset + 1];
-        println!(
-            "value={} start={} end={}",
-            value, start_offset, end_byte_offset
-        );
 
         self.add_token(Token::Text(value));
     }

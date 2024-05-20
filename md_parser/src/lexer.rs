@@ -6,8 +6,8 @@ const SYMBOLS: &str = "#*!_[]().- \n\t\\";
 pub struct Lexer<'a> {
     source: &'a str,
     tokens: Vec<(Token<'a>, Span)>,
-    start: usize,
-    current: usize,
+    start_byte_offset: usize,
+    current_byte_offset: usize,
     col: usize,
     line: usize,
 }
@@ -17,8 +17,8 @@ impl<'a> Lexer<'a> {
         Self {
             source: input,
             tokens: Vec::new(),
-            start: 0,
-            current: 0,
+            start_byte_offset: 0,
+            current_byte_offset: 0,
             line: 1,
             col: 0,
         }
@@ -26,7 +26,7 @@ impl<'a> Lexer<'a> {
 
     pub fn scan(&mut self) -> &Vec<(Token<'a>, Span)> {
         while !self.is_at_end() {
-            self.start = self.current;
+            self.start_byte_offset = self.current_byte_offset;
             self.scan_token();
         }
 
@@ -36,53 +36,76 @@ impl<'a> Lexer<'a> {
 
     fn scan_token(&mut self) {
         let Some(c) = self.advance() else {
-            panic!("Could not scan the next token. Line {}", &self.line);
+            panic!(
+                "Could not scan the next token. line={} byte_offset={}",
+                &self.line, self.current_byte_offset
+            );
         };
 
         match c {
-            '#' => self.add_token(Token::Hash),
-            '*' => self.add_token(Token::Star),
-            '!' => self.add_token(Token::Bang),
-            ' ' => self.add_token(Token::Space),
-            '_' => self.add_token(Token::Underscore),
-            '-' => self.add_token(Token::Dash),
-            '.' => self.add_token(Token::Dot),
-            '(' => self.add_token(Token::LeftParen),
-            ')' => self.add_token(Token::RightParen),
-            '[' => self.add_token(Token::LeftSquareBracket),
-            ']' => self.add_token(Token::RightSquareBracket),
-            '\\' => self.add_token(Token::Backslash),
-            '\t' => self.add_token(Token::Tab),
-            '\n' => {
-                self.line += 1;
-                self.col = 0;
-                self.add_token(Token::Newline);
-            }
-            c if c.is_ascii_digit() => {
-                self.add_token(Token::Digit(&self.source[self.current - 1..self.current]))
-            }
+            b'#' => self.add_token(Token::Hash),
+            b'*' => self.add_token(Token::Star),
+            b'!' => self.add_token(Token::Bang),
+            b' ' => self.add_token(Token::Space),
+            b'_' => self.add_token(Token::Underscore),
+            b'-' => self.add_token(Token::Dash),
+            b'.' => self.add_token(Token::Dot),
+            b'(' => self.add_token(Token::LeftParen),
+            b')' => self.add_token(Token::RightParen),
+            b'[' => self.add_token(Token::LeftSquareBracket),
+            b']' => self.add_token(Token::RightSquareBracket),
+            b'\\' => self.add_token(Token::Backslash),
+            b'\t' => self.add_token(Token::Tab),
+            b'\n' => self.add_token(Token::Newline),
+            c if c.is_ascii_digit() => self.add_token(Token::Digit(
+                &self.source[self.current_byte_offset - 1..self.current_byte_offset],
+            )),
             _ => self.handle_string(),
         }
     }
 
-    fn is_token(&self, c: Option<char>) -> bool {
-        c.filter(|c| c.is_ascii_digit() || SYMBOLS.contains(*c))
-            .is_some()
+    fn is_token(&self, c: Option<u8>) -> bool {
+        match c {
+            Some(c) => {
+                if c.is_ascii() {
+                    println!(
+                        "symbol={} contains={}",
+                        c as char,
+                        SYMBOLS.contains(c as char)
+                    );
+                    c.is_ascii_digit() || SYMBOLS.contains(c as char)
+                } else {
+                    false
+                }
+            }
+            None => false,
+        }
     }
 
     fn handle_string(&mut self) {
+        let start_offset = self.current_byte_offset - 1;
+        let mut end_byte_offset = start_offset;
         while !self.is_at_end() && !self.is_token(self.peek()) {
-            self.advance();
+            let value = self.advance();
+            println!(
+                "Advancing a byte value={:#?} peek={:#?}",
+                value.map(|c| c as char),
+                self.peek().map(|c| c as char)
+            );
+            end_byte_offset += 1;
         }
 
-        let sub_str_offset = self.start + (self.current - self.start);
-        let value = &self.source[self.start..sub_str_offset];
+        let value = &self.source[start_offset..end_byte_offset + 1];
+        println!(
+            "value={} start={} end={}",
+            value, start_offset, end_byte_offset
+        );
 
         self.add_token(Token::Text(value));
     }
 
     fn is_at_end(&self) -> bool {
-        self.current >= self.source.len()
+        self.current_byte_offset >= self.source.bytes().len()
     }
 
     fn add_token(&mut self, token: Token<'a>) {
@@ -95,27 +118,39 @@ impl<'a> Lexer<'a> {
     }
 
     /// Look-up the next character, but do not consume it
-    fn peek(&self) -> Option<char> {
+    fn peek(&self) -> Option<u8> {
         if self.is_at_end() {
             return None;
         }
-        self.source.chars().nth(self.current)
+        self.source
+            .as_bytes()
+            .get(self.current_byte_offset)
+            .copied()
     }
 
     /// Consume the next character and advance the needle
     /// to point to a potential next character
-    fn advance(&mut self) -> Option<char> {
-        let c = self.source.chars().nth(self.current);
-        self.current += 1;
-        self.col += 1;
-        c
-    }
+    fn advance(&mut self) -> Option<u8> {
+        if let Some(c) = self
+            .source
+            .as_bytes()
+            .get(self.current_byte_offset)
+            .copied()
+        {
+            if c == b'\n' {
+                self.line += 1;
+                self.col = 0;
+            } else {
+                self.col += 1;
+            }
 
-    // Look-up one character after the next, but do not consume it
-    // fn peek_next(&self) -> Option<char> {
-    //     self.input.chars().nth(self.current + 1)
-    // }
-    //
+            self.current_byte_offset += 1;
+            return Some(c);
+        }
+
+        self.current_byte_offset += 1;
+        None
+    }
 }
 
 #[cfg(test)]
@@ -131,5 +166,18 @@ mod tests {
             let mut lexer = Lexer::new(&markdown);
             insta::assert_json_snapshot!(lexer.scan());
         });
+    }
+
+    #[test]
+    fn accept_multi_byte_chars() {
+        let markdown = r"
+        ## This is a title
+        
+        This should include emojis and **bold text**.
+        🤡😜🎉 text 🐙👪.
+        ";
+        let mut lexer = Lexer::new(markdown);
+        let result = lexer.scan();
+        assert_eq!(result.len(), 80);
     }
 }

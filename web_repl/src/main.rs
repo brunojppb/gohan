@@ -6,7 +6,7 @@ use md_parser::renderer::render_html;
 
 const INITIAL_MD: &str = r"## Hello from Gohan!
 
-Gohan is a [Rust-based](https://www.rust-lang.org/) markdown parser and HTML compiler.
+Gohan is a [Rust-based 🦀](https://www.rust-lang.org/) markdown parser and HTML compiler.
 Give it a **try!**.
 ";
 

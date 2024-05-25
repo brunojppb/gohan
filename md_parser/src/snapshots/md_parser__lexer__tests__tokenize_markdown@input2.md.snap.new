@@ -1,0 +1,804 @@
+---
+source: md_parser/src/lexer.rs
+assertion_line: 155
+expression: lexer.scan()
+input_file: md_parser/src/snapshot_inputs/input2.md
+---
+[
+  [
+    "Hash",
+    {
+      "line": 1,
+      "col": 2
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 1,
+      "col": 3
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 1,
+      "col": 4
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 1,
+      "col": 5
+    }
+  ],
+  [
+    {
+      "Text": "Article"
+    },
+    {
+      "line": 1,
+      "col": 12
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 1,
+      "col": 13
+    }
+  ],
+  [
+    {
+      "Text": "of"
+    },
+    {
+      "line": 1,
+      "col": 15
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 1,
+      "col": 16
+    }
+  ],
+  [
+    {
+      "Text": "the"
+    },
+    {
+      "line": 1,
+      "col": 19
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 1,
+      "col": 20
+    }
+  ],
+  [
+    {
+      "Text": "week"
+    },
+    {
+      "line": 1,
+      "col": 24
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 2,
+      "col": 1
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 3,
+      "col": 1
+    }
+  ],
+  [
+    {
+      "Text": "In"
+    },
+    {
+      "line": 3,
+      "col": 3
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 4
+    }
+  ],
+  [
+    {
+      "Text": "my"
+    },
+    {
+      "line": 3,
+      "col": 6
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 7
+    }
+  ],
+  [
+    {
+      "Text": "walks"
+    },
+    {
+      "line": 3,
+      "col": 12
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 13
+    }
+  ],
+  [
+    {
+      "Text": "around"
+    },
+    {
+      "line": 3,
+      "col": 19
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 20
+    }
+  ],
+  [
+    {
+      "Text": "the"
+    },
+    {
+      "line": 3,
+      "col": 23
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 24
+    }
+  ],
+  [
+    "LeftSquareBracket",
+    {
+      "line": 3,
+      "col": 25
+    }
+  ],
+  [
+    {
+      "Text": "Prater"
+    },
+    {
+      "line": 3,
+      "col": 31
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 32
+    }
+  ],
+  [
+    {
+      "Text": "Park"
+    },
+    {
+      "line": 3,
+      "col": 36
+    }
+  ],
+  [
+    "RightSquareBracket",
+    {
+      "line": 3,
+      "col": 37
+    }
+  ],
+  [
+    "LeftParen",
+    {
+      "line": 3,
+      "col": 38
+    }
+  ],
+  [
+    {
+      "Text": "https://www"
+    },
+    {
+      "line": 3,
+      "col": 49
+    }
+  ],
+  [
+    "Dot",
+    {
+      "line": 3,
+      "col": 50
+    }
+  ],
+  [
+    {
+      "Text": "praterwien"
+    },
+    {
+      "line": 3,
+      "col": 60
+    }
+  ],
+  [
+    "Dot",
+    {
+      "line": 3,
+      "col": 61
+    }
+  ],
+  [
+    {
+      "Text": "com/en/home"
+    },
+    {
+      "line": 3,
+      "col": 72
+    }
+  ],
+  [
+    "RightParen",
+    {
+      "line": 3,
+      "col": 73
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 74
+    }
+  ],
+  [
+    {
+      "Text": "I've"
+    },
+    {
+      "line": 3,
+      "col": 78
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 79
+    }
+  ],
+  [
+    {
+      "Text": "been"
+    },
+    {
+      "line": 3,
+      "col": 83
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 3,
+      "col": 84
+    }
+  ],
+  [
+    {
+      "Text": "very"
+    },
+    {
+      "line": 3,
+      "col": 88
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 4,
+      "col": 1
+    }
+  ],
+  [
+    {
+      "Text": "happy"
+    },
+    {
+      "line": 4,
+      "col": 6
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 7
+    }
+  ],
+  [
+    {
+      "Text": "to"
+    },
+    {
+      "line": 4,
+      "col": 9
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 10
+    }
+  ],
+  [
+    {
+      "Text": "be"
+    },
+    {
+      "line": 4,
+      "col": 12
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 13
+    }
+  ],
+  [
+    {
+      "Text": "able"
+    },
+    {
+      "line": 4,
+      "col": 17
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 18
+    }
+  ],
+  [
+    {
+      "Text": "to"
+    },
+    {
+      "line": 4,
+      "col": 20
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 21
+    }
+  ],
+  [
+    {
+      "Text": "enjoy"
+    },
+    {
+      "line": 4,
+      "col": 26
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 27
+    }
+  ],
+  [
+    {
+      "Text": "nature"
+    },
+    {
+      "line": 4,
+      "col": 33
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 34
+    }
+  ],
+  [
+    {
+      "Text": "in"
+    },
+    {
+      "line": 4,
+      "col": 36
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 37
+    }
+  ],
+  [
+    {
+      "Text": "it's"
+    },
+    {
+      "line": 4,
+      "col": 41
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 42
+    }
+  ],
+  [
+    {
+      "Text": "true"
+    },
+    {
+      "line": 4,
+      "col": 46
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 47
+    }
+  ],
+  [
+    {
+      "Text": "form"
+    },
+    {
+      "line": 4,
+      "col": 51
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 52
+    }
+  ],
+  [
+    {
+      "Text": "across"
+    },
+    {
+      "line": 4,
+      "col": 58
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 59
+    }
+  ],
+  [
+    {
+      "Text": "all"
+    },
+    {
+      "line": 4,
+      "col": 62
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 63
+    }
+  ],
+  [
+    {
+      "Text": "the"
+    },
+    {
+      "line": 4,
+      "col": 66
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 4,
+      "col": 67
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 68
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 69
+    }
+  ],
+  [
+    {
+      "Text": "seasons"
+    },
+    {
+      "line": 4,
+      "col": 76
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 77
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 4,
+      "col": 78
+    }
+  ],
+  [
+    "Dot",
+    {
+      "line": 4,
+      "col": 79
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 5,
+      "col": 1
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 6,
+      "col": 1
+    }
+  ],
+  [
+    {
+      "Text": "Particularly"
+    },
+    {
+      "line": 6,
+      "col": 13
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 14
+    }
+  ],
+  [
+    {
+      "Text": "during"
+    },
+    {
+      "line": 6,
+      "col": 20
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 21
+    }
+  ],
+  [
+    {
+      "Text": "summer"
+    },
+    {
+      "line": 6,
+      "col": 27
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 28
+    }
+  ],
+  [
+    {
+      "Text": "where"
+    },
+    {
+      "line": 6,
+      "col": 33
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 34
+    }
+  ],
+  [
+    {
+      "Text": "it's"
+    },
+    {
+      "line": 6,
+      "col": 38
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 39
+    }
+  ],
+  [
+    {
+      "Text": "all"
+    },
+    {
+      "line": 6,
+      "col": 42
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 43
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 6,
+      "col": 44
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 6,
+      "col": 45
+    }
+  ],
+  [
+    {
+      "Text": "green"
+    },
+    {
+      "line": 6,
+      "col": 50
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 6,
+      "col": 51
+    }
+  ],
+  [
+    "Star",
+    {
+      "line": 6,
+      "col": 52
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 53
+    }
+  ],
+  [
+    {
+      "Text": "and"
+    },
+    {
+      "line": 6,
+      "col": 56
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 6,
+      "col": 57
+    }
+  ],
+  [
+    {
+      "Text": "beautiful"
+    },
+    {
+      "line": 6,
+      "col": 66
+    }
+  ],
+  [
+    "Dot",
+    {
+      "line": 6,
+      "col": 67
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 7,
+      "col": 1
+    }
+  ],
+  [
+    "EndOfFile",
+    {
+      "line": 7,
+      "col": 1
+    }
+  ]
+]

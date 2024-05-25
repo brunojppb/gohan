@@ -20,7 +20,7 @@ impl<'a> Lexer<'a> {
             start_byte_offset: 0,
             current_byte_offset: 0,
             line: 1,
-            col: 0,
+            col: 1,
         }
     }
 
@@ -114,8 +114,10 @@ impl<'a> Lexer<'a> {
             .copied()
     }
 
-    /// Consume the next character and advance the needle
-    /// to point to a potential next character
+    /// Consume the next byte and advance the needle
+    /// to point to a potential next character.
+    /// byte continution of multi-byte characters
+    /// should be handled by the caller.
     fn advance(&mut self) -> Option<u8> {
         if let Some(c) = self
             .source
@@ -125,7 +127,7 @@ impl<'a> Lexer<'a> {
         {
             if c == b'\n' {
                 self.line += 1;
-                self.col = 0;
+                self.col = 1;
             } else {
                 self.col += 1;
             }

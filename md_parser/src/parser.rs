@@ -78,9 +78,18 @@ impl<'source> Parser<'source> {
     }
 
     fn block(&mut self) -> Option<Node<'source>> {
-        if self.match_token(Token::Hash) {
-            return self.maybe_heading();
+        while self.check(Token::Newline) {
+            self.consume(Token::Newline);
         }
+
+        // Headings can only start as the very first token in a line
+        if let Some(&(Token::Hash, span)) = self.peek() {
+            if span.col == 1 {
+                return self.maybe_heading();
+            }
+        }
+
+        println!("peek={:#?} next={:#?}", self.peek(), self.peek_next());
 
         self.maybe_paragraph()
     }
@@ -149,6 +158,7 @@ impl<'source> Parser<'source> {
                 | Token::Dot
                 | Token::Underscore
                 | Token::Bang
+                | Token::Hash
                 | Token::Backslash => InlineNode::Text(token.literal()),
                 t if t.is_block_level_token() => return None,
                 t => todo!("unhandled token: {}", t),

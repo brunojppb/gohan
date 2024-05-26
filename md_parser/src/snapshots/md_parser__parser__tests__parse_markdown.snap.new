@@ -1,6 +1,6 @@
 ---
 source: md_parser/src/parser.rs
-assertion_line: 305
+assertion_line: 307
 expression: ast
 input_file: md_parser/src/snapshot_inputs/input2.md
 ---
@@ -8,7 +8,7 @@ input_file: md_parser/src/snapshot_inputs/input2.md
   {
     "Block": {
       "Heading": [
-        3,
+        4,
         [
           {
             "Text": "Article"
@@ -283,7 +283,7 @@ input_file: md_parser/src/snapshot_inputs/input2.md
   {
     "Block": {
       "Heading": [
-        2,
+        3,
         [
           {
             "Text": "Another"

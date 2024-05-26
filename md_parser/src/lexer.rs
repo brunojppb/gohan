@@ -20,7 +20,7 @@ impl<'a> Lexer<'a> {
             start_byte_offset: 0,
             current_byte_offset: 0,
             line: 1,
-            col: 1,
+            col: 0,
         }
     }
 
@@ -127,7 +127,7 @@ impl<'a> Lexer<'a> {
         {
             if c == b'\n' {
                 self.line += 1;
-                self.col = 1;
+                self.col = 0;
             } else {
                 self.col += 1;
             }

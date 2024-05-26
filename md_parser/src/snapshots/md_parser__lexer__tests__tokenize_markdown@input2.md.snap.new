@@ -9,6 +9,13 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     "Hash",
     {
       "line": 1,
+      "col": 1
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 1,
       "col": 2
     }
   ],
@@ -20,17 +27,10 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   ],
   [
-    "Hash",
-    {
-      "line": 1,
-      "col": 4
-    }
-  ],
-  [
     "Space",
     {
       "line": 1,
-      "col": 5
+      "col": 4
     }
   ],
   [
@@ -39,14 +39,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 1,
-      "col": 12
+      "col": 11
     }
   ],
   [
     "Space",
     {
       "line": 1,
-      "col": 13
+      "col": 12
     }
   ],
   [
@@ -55,14 +55,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 1,
-      "col": 15
+      "col": 14
     }
   ],
   [
     "Space",
     {
       "line": 1,
-      "col": 16
+      "col": 15
     }
   ],
   [
@@ -71,14 +71,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 1,
-      "col": 19
+      "col": 18
     }
   ],
   [
     "Space",
     {
       "line": 1,
-      "col": 20
+      "col": 19
     }
   ],
   [
@@ -87,21 +87,21 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 1,
-      "col": 24
+      "col": 23
     }
   ],
   [
     "Newline",
     {
       "line": 2,
-      "col": 1
+      "col": 0
     }
   ],
   [
     "Newline",
     {
       "line": 3,
-      "col": 1
+      "col": 0
     }
   ],
   [
@@ -110,14 +110,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 3
+      "col": 2
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 4
+      "col": 3
     }
   ],
   [
@@ -126,14 +126,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 6
+      "col": 5
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 7
+      "col": 6
     }
   ],
   [
@@ -142,14 +142,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 12
+      "col": 11
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 13
+      "col": 12
     }
   ],
   [
@@ -158,14 +158,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 19
+      "col": 18
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 20
+      "col": 19
     }
   ],
   [
@@ -174,21 +174,21 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 23
+      "col": 22
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 24
+      "col": 23
     }
   ],
   [
     "LeftSquareBracket",
     {
       "line": 3,
-      "col": 25
+      "col": 24
     }
   ],
   [
@@ -197,14 +197,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 31
+      "col": 30
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 32
+      "col": 31
     }
   ],
   [
@@ -213,21 +213,21 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 36
+      "col": 35
     }
   ],
   [
     "RightSquareBracket",
     {
       "line": 3,
-      "col": 37
+      "col": 36
     }
   ],
   [
     "LeftParen",
     {
       "line": 3,
-      "col": 38
+      "col": 37
     }
   ],
   [
@@ -236,14 +236,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 49
+      "col": 48
     }
   ],
   [
     "Dot",
     {
       "line": 3,
-      "col": 50
+      "col": 49
     }
   ],
   [
@@ -252,14 +252,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 60
+      "col": 59
     }
   ],
   [
     "Dot",
     {
       "line": 3,
-      "col": 61
+      "col": 60
     }
   ],
   [
@@ -268,21 +268,21 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 72
+      "col": 71
     }
   ],
   [
     "RightParen",
     {
       "line": 3,
-      "col": 73
+      "col": 72
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 74
+      "col": 73
     }
   ],
   [
@@ -291,14 +291,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 78
+      "col": 77
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 79
+      "col": 78
     }
   ],
   [
@@ -307,14 +307,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 83
+      "col": 82
     }
   ],
   [
     "Space",
     {
       "line": 3,
-      "col": 84
+      "col": 83
     }
   ],
   [
@@ -323,14 +323,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 3,
-      "col": 88
+      "col": 87
     }
   ],
   [
     "Newline",
     {
       "line": 4,
-      "col": 1
+      "col": 0
     }
   ],
   [
@@ -339,14 +339,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 6
+      "col": 5
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 7
+      "col": 6
     }
   ],
   [
@@ -355,14 +355,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 9
+      "col": 8
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 10
+      "col": 9
     }
   ],
   [
@@ -371,14 +371,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 12
+      "col": 11
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 13
+      "col": 12
     }
   ],
   [
@@ -387,14 +387,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 17
+      "col": 16
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 18
+      "col": 17
     }
   ],
   [
@@ -403,14 +403,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 20
+      "col": 19
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 21
+      "col": 20
     }
   ],
   [
@@ -419,14 +419,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 26
+      "col": 25
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 27
+      "col": 26
     }
   ],
   [
@@ -435,14 +435,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 33
+      "col": 32
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 34
+      "col": 33
     }
   ],
   [
@@ -451,14 +451,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 36
+      "col": 35
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 37
+      "col": 36
     }
   ],
   [
@@ -467,14 +467,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 41
+      "col": 40
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 42
+      "col": 41
     }
   ],
   [
@@ -483,14 +483,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 46
+      "col": 45
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 47
+      "col": 46
     }
   ],
   [
@@ -499,14 +499,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 51
+      "col": 50
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 52
+      "col": 51
     }
   ],
   [
@@ -515,14 +515,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 58
+      "col": 57
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 59
+      "col": 58
     }
   ],
   [
@@ -531,14 +531,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 62
+      "col": 61
     }
   ],
   [
     "Space",
     {
       "line": 4,
-      "col": 63
+      "col": 62
     }
   ],
   [
@@ -547,11 +547,18 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 4,
-      "col": 66
+      "col": 65
     }
   ],
   [
     "Space",
+    {
+      "line": 4,
+      "col": 66
+    }
+  ],
+  [
+    "Star",
     {
       "line": 4,
       "col": 67
@@ -565,16 +572,16 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   ],
   [
-    "Star",
-    {
-      "line": 4,
-      "col": 69
-    }
-  ],
-  [
     {
       "Text": "seasons"
     },
+    {
+      "line": 4,
+      "col": 75
+    }
+  ],
+  [
+    "Star",
     {
       "line": 4,
       "col": 76
@@ -588,31 +595,24 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   ],
   [
-    "Star",
+    "Dot",
     {
       "line": 4,
       "col": 78
     }
   ],
   [
-    "Dot",
-    {
-      "line": 4,
-      "col": 79
-    }
-  ],
-  [
     "Newline",
     {
       "line": 5,
-      "col": 1
+      "col": 0
     }
   ],
   [
     "Newline",
     {
       "line": 6,
-      "col": 1
+      "col": 0
     }
   ],
   [
@@ -621,14 +621,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 13
+      "col": 12
     }
   ],
   [
     "Space",
     {
       "line": 6,
-      "col": 14
+      "col": 13
     }
   ],
   [
@@ -637,14 +637,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 20
+      "col": 19
     }
   ],
   [
     "Space",
     {
       "line": 6,
-      "col": 21
+      "col": 20
     }
   ],
   [
@@ -653,14 +653,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 27
+      "col": 26
     }
   ],
   [
     "Space",
     {
       "line": 6,
-      "col": 28
+      "col": 27
     }
   ],
   [
@@ -669,14 +669,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 33
+      "col": 32
     }
   ],
   [
     "Space",
     {
       "line": 6,
-      "col": 34
+      "col": 33
     }
   ],
   [
@@ -685,14 +685,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 38
+      "col": 37
     }
   ],
   [
     "Space",
     {
       "line": 6,
-      "col": 39
+      "col": 38
     }
   ],
   [
@@ -701,11 +701,18 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 42
+      "col": 41
     }
   ],
   [
     "Space",
+    {
+      "line": 6,
+      "col": 42
+    }
+  ],
+  [
+    "Star",
     {
       "line": 6,
       "col": 43
@@ -719,16 +726,16 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   ],
   [
-    "Star",
-    {
-      "line": 6,
-      "col": 45
-    }
-  ],
-  [
     {
       "Text": "green"
     },
+    {
+      "line": 6,
+      "col": 49
+    }
+  ],
+  [
+    "Star",
     {
       "line": 6,
       "col": 50
@@ -742,17 +749,10 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   ],
   [
-    "Star",
-    {
-      "line": 6,
-      "col": 52
-    }
-  ],
-  [
     "Space",
     {
       "line": 6,
-      "col": 53
+      "col": 52
     }
   ],
   [
@@ -761,14 +761,14 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 56
+      "col": 55
     }
   ],
   [
     "Space",
     {
       "line": 6,
-      "col": 57
+      "col": 56
     }
   ],
   [
@@ -777,28 +777,88 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     },
     {
       "line": 6,
-      "col": 66
+      "col": 65
     }
   ],
   [
     "Dot",
     {
       "line": 6,
-      "col": 67
+      "col": 66
     }
   ],
   [
     "Newline",
     {
       "line": 7,
+      "col": 0
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 8,
+      "col": 0
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 8,
       "col": 1
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 8,
+      "col": 2
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 8,
+      "col": 3
+    }
+  ],
+  [
+    {
+      "Text": "Another"
+    },
+    {
+      "line": 8,
+      "col": 10
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 8,
+      "col": 11
+    }
+  ],
+  [
+    {
+      "Text": "header"
+    },
+    {
+      "line": 8,
+      "col": 17
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 9,
+      "col": 0
     }
   ],
   [
     "EndOfFile",
     {
-      "line": 7,
-      "col": 1
+      "line": 9,
+      "col": 0
     }
   ]
 ]

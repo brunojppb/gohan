@@ -1,3 +1,5 @@
+use std::cmp::max;
+
 use crate::ast::{BlockNode, InlineNode, Node};
 use crate::token::{Span, Token};
 
@@ -89,18 +91,16 @@ impl<'source> Parser<'source> {
             }
         }
 
-        println!("peek={:#?} next={:#?}", self.peek(), self.peek_next());
-
         self.maybe_paragraph()
     }
 
     fn maybe_heading(&mut self) -> Option<Node<'source>> {
-        let mut heading_level: u8 = 1;
+        let mut heading_level: u8 = 0;
         while self.match_token(Token::Hash) {
             heading_level += 1;
         }
 
-        if heading_level <= 6 && self.match_token(Token::Space) {
+        if heading_level > 0 && heading_level <= 6 && self.match_token(Token::Space) {
             let mut inline_elements = Vec::new();
             while let Some(inline) = self.inline() {
                 inline_elements.push(inline)
@@ -109,6 +109,16 @@ impl<'source> Parser<'source> {
                 heading_level,
                 inline_elements,
             )));
+        }
+
+        // There was certainly hashes detected, but they are just text
+        // As the count is higher than the allowed heading levels
+        // So we move the needle back and allow these tokens to be consumed
+        // as normal text within a paragraph
+        if heading_level > 0 {
+            for _i in 0..heading_level {
+                self.step_back();
+            }
         }
 
         self.maybe_paragraph()
@@ -241,6 +251,11 @@ impl<'source> Parser<'source> {
         return self.previous();
     }
 
+    fn step_back(&mut self) -> Option<&(Token<'source>, Span)> {
+        self.current = max(0, self.current - 1);
+        return self.peek();
+    }
+
     fn previous(&self) -> Option<&(Token<'source>, Span)> {
         self.tokens.get(self.current - 1)
     }
@@ -301,7 +316,8 @@ mod tests {
         insta::glob!("snapshot_inputs/*.md", |path| {
             let markdown = fs::read_to_string(path).unwrap();
             let mut lexer = Lexer::new(&markdown);
-            let mut parser = Parser::new(lexer.scan());
+            let tokens = lexer.scan();
+            let mut parser = Parser::new(tokens);
             let ast = parser.parse();
             insta::assert_json_snapshot!(ast);
         });

@@ -1,6 +1,6 @@
 ---
 source: md_parser/src/parser.rs
-assertion_line: 305
+assertion_line: 355
 expression: ast
 input_file: md_parser/src/snapshot_inputs/input2.md
 ---

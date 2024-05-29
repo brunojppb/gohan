@@ -154,9 +154,7 @@ impl<'source> Parser<'source> {
         if let Some((token, _)) = self.peek() {
             let node = match token {
                 Token::Star if self.check_next(Token::Star) => return Some(self.bold()),
-                Token::LeftSquareBracket => {
-                    return self.link();
-                }
+                Token::LeftSquareBracket => return self.maybe_link(),
                 Token::Newline if self.check_next(Token::Newline) => {
                     return None;
                 }
@@ -169,6 +167,9 @@ impl<'source> Parser<'source> {
                 | Token::Underscore
                 | Token::Bang
                 | Token::Hash
+                | Token::LeftParen
+                | Token::RightParen
+                | Token::RightSquareBracket
                 | Token::Backslash => InlineNode::Text(token.literal()),
                 t if t.is_block_level_token() => return None,
                 t => todo!("unhandled token: {}", t),
@@ -180,34 +181,67 @@ impl<'source> Parser<'source> {
         None
     }
 
-    fn link(&mut self) -> Option<InlineNode<'source>> {
-        self.consume(Token::LeftSquareBracket);
-        //@TODO: lookahead for the closing link symbols and bail in case block symbols show up.
-        // Link symbols like "[" and "(" should be interpreted as normal text for cases where a link is not fully written
-        let mut link_text = Vec::new();
-        while !self.check(Token::RightSquareBracket) && !self.is_at_end() {
-            if let Some(inline) = self.inline() {
-                link_text.push(inline);
-            } else {
-                panic!("Invalid inline node with link component");
+    // Any inline element can partially show-up and should be represented as text,
+    // but if we find the right token makers that can complete a link, we should
+    // rewind and structure it as a Link inline node instead.
+    fn maybe_link(&mut self) -> Option<InlineNode<'source>> {
+        let mut markers: [u8; 4] = [0, 0, 0, 0];
+        let rewind_position = self.current;
+        'outer: while markers != [1, 1, 1, 1] && !self.is_at_end() {
+            while let Some((next, _)) = self.advance() {
+                match next {
+                    Token::LeftSquareBracket => markers[0] = 1,
+                    Token::RightSquareBracket => markers[1] = 1,
+                    Token::LeftParen => markers[2] = 1,
+                    Token::RightParen => markers[3] = 1,
+                    token if token.is_block_level_token() => {
+                        if let Some(&(Token::Newline, _)) = self.previous() {
+                            break 'outer;
+                        }
+                    }
+                    _ => {}
+                };
             }
         }
 
-        self.consume(Token::RightSquareBracket);
-        self.consume(Token::LeftParen);
+        // We are guaranteed to have a well-structured link here
+        // lets force-consume all the special tokens
+        if markers == [1, 1, 1, 1] {
+            self.rewind(rewind_position);
 
-        let mut url = Vec::new();
-        while !self.check(Token::RightParen) && !self.is_at_end() {
-            if let Some(inline) = self.inline() {
-                url.push(inline);
-            } else {
-                panic!("Invalid inline node for link URL component");
+            self.consume(Token::LeftSquareBracket);
+
+            let mut link_text = Vec::new();
+            while !self.check(Token::RightSquareBracket) && !self.is_at_end() {
+                if let Some(inline) = self.inline() {
+                    link_text.push(inline);
+                } else {
+                    break;
+                }
             }
+
+            self.consume(Token::RightSquareBracket);
+            self.consume(Token::LeftParen);
+
+            let mut url = Vec::new();
+            while !self.check(Token::RightParen) && !self.is_at_end() {
+                if let Some(inline) = self.inline() {
+                    url.push(inline);
+                } else {
+                    break;
+                }
+            }
+
+            self.consume(Token::RightParen);
+
+            Some(InlineNode::Link(link_text, url))
+        } else {
+            // Otherwise we bail, rewind and let the next loop handle each token
+            // be handled as normal text or other inline elements
+            self.rewind(rewind_position);
+            self.consume(Token::LeftSquareBracket);
+            Some(InlineNode::Text(&Token::LeftSquareBracket.literal()))
         }
-
-        self.consume(Token::RightParen);
-
-        Some(InlineNode::Link(link_text, url))
     }
 
     fn bold(&mut self) -> InlineNode<'source> {
@@ -249,6 +283,10 @@ impl<'source> Parser<'source> {
 
         self.current += 1;
         return self.previous();
+    }
+
+    fn rewind(&mut self, to_position: usize) {
+        self.current = to_position;
     }
 
     fn step_back(&mut self) -> Option<&(Token<'source>, Span)> {

@@ -1,5 +1,3 @@
-use std::cmp::max;
-
 use crate::ast::{BlockNode, InlineNode, Node};
 use crate::token::{Span, Token};
 
@@ -119,9 +117,7 @@ impl<'source> Parser<'source> {
         // So we move the needle back and allow these tokens to be consumed
         // as normal text within a paragraph
         if heading_level > 0 {
-            for _i in 0..heading_level {
-                self.step_back();
-            }
+            self.rewind(heading_level as usize);
         }
 
         self.maybe_paragraph()
@@ -290,11 +286,6 @@ impl<'source> Parser<'source> {
 
     fn rewind(&mut self, to_position: usize) {
         self.current = to_position;
-    }
-
-    fn step_back(&mut self) -> Option<&(Token<'source>, Span)> {
-        self.current = max(0, self.current - 1);
-        return self.peek();
     }
 
     fn previous(&self) -> Option<&(Token<'source>, Span)> {

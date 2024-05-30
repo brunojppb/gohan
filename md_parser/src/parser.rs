@@ -103,6 +103,9 @@ impl<'source> Parser<'source> {
         if heading_level > 0 && heading_level <= 6 && self.match_token(Token::Space) {
             let mut inline_elements = Vec::new();
             while let Some(inline) = self.inline() {
+                if inline == InlineNode::LineBreak {
+                    break;
+                }
                 inline_elements.push(inline)
             }
             return Some(Node::Block(BlockNode::Heading(
@@ -240,7 +243,7 @@ impl<'source> Parser<'source> {
             // be handled as normal text or other inline elements
             self.rewind(rewind_position);
             self.consume(Token::LeftSquareBracket);
-            Some(InlineNode::Text(&Token::LeftSquareBracket.literal()))
+            Some(InlineNode::Text(Token::LeftSquareBracket.literal()))
         }
     }
 

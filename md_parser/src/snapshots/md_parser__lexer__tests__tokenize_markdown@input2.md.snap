@@ -794,9 +794,69 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   ],
   [
+    "Newline",
+    {
+      "line": 8,
+      "col": 0
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 8,
+      "col": 1
+    }
+  ],
+  [
+    "Hash",
+    {
+      "line": 8,
+      "col": 2
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 8,
+      "col": 3
+    }
+  ],
+  [
+    {
+      "Text": "Another"
+    },
+    {
+      "line": 8,
+      "col": 10
+    }
+  ],
+  [
+    "Space",
+    {
+      "line": 8,
+      "col": 11
+    }
+  ],
+  [
+    {
+      "Text": "header"
+    },
+    {
+      "line": 8,
+      "col": 17
+    }
+  ],
+  [
+    "Newline",
+    {
+      "line": 9,
+      "col": 0
+    }
+  ],
+  [
     "EndOfFile",
     {
-      "line": 7,
+      "line": 9,
       "col": 0
     }
   ]

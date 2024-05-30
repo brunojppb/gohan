@@ -114,8 +114,10 @@ impl<'a> Lexer<'a> {
             .copied()
     }
 
-    /// Consume the next character and advance the needle
-    /// to point to a potential next character
+    /// Consume the next byte and advance the needle
+    /// to point to a potential next character.
+    /// byte continution of multi-byte characters
+    /// should be handled by the caller.
     fn advance(&mut self) -> Option<u8> {
         if let Some(c) = self
             .source

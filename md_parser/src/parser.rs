@@ -1,6 +1,8 @@
 use crate::ast::{BlockNode, InlineNode, Node};
 use crate::token::{Span, Token};
 
+use std::cmp::max;
+
 // Markdown Grammar
 // (* A document is a series of blocks *)
 // document = { block } ;
@@ -116,7 +118,7 @@ impl<'source> Parser<'source> {
         // we know they are not valid header levels
         // so let's rewind and let them be handled as normal text
         if heading_level > 0 {
-            self.rewind(heading_level as usize);
+            self.step_back(heading_level as usize);
         }
 
         self.maybe_paragraph()
@@ -179,12 +181,12 @@ impl<'source> Parser<'source> {
         None
     }
 
-    // Any inline element can partially show-up and should be represented as text,
-    // but if we find the right token makers that can complete a link, we should
-    // rewind and structure it as a Link inline node instead.
     fn maybe_link(&mut self) -> Option<InlineNode<'source>> {
         let mut markers: [u8; 4] = [0, 0, 0, 0];
         let rewind_position = self.current;
+        // Any inline element can partially show-up and should be represented as text,
+        // but if we find the right token makers that can complete a link, we should
+        // rewind and structure it as a Link inline node instead.
         'outer: while markers != [1, 1, 1, 1] && !self.is_at_end() {
             while let Some((next, _)) = self.advance() {
                 match next {
@@ -192,7 +194,14 @@ impl<'source> Parser<'source> {
                     Token::RightSquareBracket => markers[1] = 1,
                     Token::LeftParen => markers[2] = 1,
                     Token::RightParen => markers[3] = 1,
+                    // Links can contain newlines, but if a newline
+                    // is followed by any block-level token
                     token if token.is_block_level_token() => {
+                        if let Some(&(Token::Newline, _)) = self.previous() {
+                            break 'outer;
+                        }
+                    }
+                    token if token == &Token::Newline => {
                         if let Some(&(Token::Newline, _)) = self.previous() {
                             break 'outer;
                         }
@@ -281,6 +290,11 @@ impl<'source> Parser<'source> {
 
         self.current += 1;
         return self.previous();
+    }
+
+    fn step_back(&mut self, num_steps: usize) -> Option<&(Token<'source>, Span)> {
+        self.current = max(0, self.current - num_steps);
+        return self.peek();
     }
 
     fn rewind(&mut self, to_position: usize) {

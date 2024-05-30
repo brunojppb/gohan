@@ -112,10 +112,9 @@ impl<'source> Parser<'source> {
             )));
         }
 
-        // There was certainly hashes detected, but they are just text
-        // As the count is higher than the allowed heading levels
-        // So we move the needle back and allow these tokens to be consumed
-        // as normal text within a paragraph
+        // in case of detected hashes, at this point,
+        // we know they are not valid header levels
+        // so let's rewind and let them be handled as normal text
         if heading_level > 0 {
             self.rewind(heading_level as usize);
         }

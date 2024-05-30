@@ -292,11 +292,15 @@ impl<'source> Parser<'source> {
         return self.previous();
     }
 
+    /// Walk back the given number of steps,
+    /// but never move to a negative position
     fn step_back(&mut self, num_steps: usize) -> Option<&(Token<'source>, Span)> {
         self.current = max(0, self.current - num_steps);
         return self.peek();
     }
 
+    /// Jump straight to an specific position
+    /// with no bounds validation
     fn rewind(&mut self, to_position: usize) {
         self.current = to_position;
     }

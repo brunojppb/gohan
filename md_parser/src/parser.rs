@@ -194,15 +194,8 @@ impl<'source> Parser<'source> {
                     Token::RightSquareBracket => markers[1] = 1,
                     Token::LeftParen => markers[2] = 1,
                     Token::RightParen => markers[3] = 1,
-                    // Links can contain newlines, but if a newline
-                    // is followed by any block-level token
-                    token if token.is_block_level_token() => {
-                        if let Some(&(Token::Newline, _)) = self.previous() {
-                            break 'outer;
-                        }
-                    }
                     token if token == &Token::Newline => {
-                        if let Some(&(Token::Newline, _)) = self.previous() {
+                        if let Some(&(Token::Newline, _)) = self.peek() {
                             break 'outer;
                         }
                     }

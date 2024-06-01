@@ -1,4 +1,4 @@
-use crate::ast::{BlockNode, InlineNode, Node};
+use crate::ast::{Bold, Header, Link, Node, Paragraph};
 use crate::token::{Span, Token};
 
 use std::cmp::max;
@@ -112,15 +112,15 @@ impl<'source> Parser<'source> {
         if heading_level > 0 && heading_level <= 6 && self.match_token(Token::Space) {
             let mut inline_elements = Vec::new();
             while let Some(inline) = self.inline(Parent::Block) {
-                if inline == InlineNode::LineBreak {
+                if inline == Node::LineBreak {
                     break;
                 }
                 inline_elements.push(inline)
             }
-            return Some(Node::Block(BlockNode::Heading(
-                heading_level,
-                inline_elements,
-            )));
+            return Some(Node::Header(Header {
+                level: heading_level,
+                children: inline_elements,
+            }));
         }
 
         // in case of detected hashes, at this point,
@@ -152,10 +152,12 @@ impl<'source> Parser<'source> {
             return None;
         }
 
-        Some(Node::Block(BlockNode::Paragraph(inline_elements)))
+        Some(Node::Paragraph(Paragraph {
+            children: inline_elements,
+        }))
     }
 
-    fn inline(&mut self, parent: Parent) -> Option<InlineNode<'source>> {
+    fn inline(&mut self, parent: Parent) -> Option<Node<'source>> {
         if self.is_at_end() {
             return None;
         }
@@ -167,7 +169,7 @@ impl<'source> Parser<'source> {
                 Token::Newline if self.check_next(Token::Newline) => {
                     return None;
                 }
-                Token::Newline => InlineNode::LineBreak,
+                Token::Newline => Node::LineBreak,
                 Token::Star => return self.maybe_bold(),
                 Token::LeftSquareBracket if parent == Parent::Block => return self.maybe_link(),
                 Token::Text(_)
@@ -182,7 +184,7 @@ impl<'source> Parser<'source> {
                 | Token::RightParen
                 | Token::LeftSquareBracket
                 | Token::RightSquareBracket
-                | Token::Backslash => InlineNode::Text(token.literal()),
+                | Token::Backslash => Node::Text(token.literal()),
                 t if t.is_block_level_token() => return None,
                 t => todo!("unhandled token: {}", t),
             };
@@ -193,7 +195,7 @@ impl<'source> Parser<'source> {
         None
     }
 
-    fn maybe_link(&mut self) -> Option<InlineNode<'source>> {
+    fn maybe_link(&mut self) -> Option<Node<'source>> {
         let mut markers: [u8; 4] = [0, 0, 0, 0];
         let rewind_position = self.current;
         // Any inline element can partially show-up and should be represented as text,
@@ -252,16 +254,19 @@ impl<'source> Parser<'source> {
 
             self.consume(&Token::RightParen);
 
-            return Some(InlineNode::Link(link_text, url));
+            return Some(Node::Link(Link {
+                children: link_text,
+                url,
+            }));
         }
 
         // Otherwise we bail, rewind and let the next loop handle
         // each token as as normal text or other inline elements
         self.consume(&Token::LeftSquareBracket);
-        Some(InlineNode::Text(Token::LeftSquareBracket.literal()))
+        Some(Node::Text(Token::LeftSquareBracket.literal()))
     }
 
-    fn maybe_bold(&mut self) -> Option<InlineNode<'source>> {
+    fn maybe_bold(&mut self) -> Option<Node<'source>> {
         let mut markers: [u8; 2] = [0, 0];
         let rewind_position = self.current;
         'outer: while markers != [1, 1] && !self.is_at_end() {
@@ -303,14 +308,14 @@ impl<'source> Parser<'source> {
             // Consume the wrapping "**" around bold tokens
             self.consume(&Token::Star);
             self.consume(&Token::Star);
-            return Some(InlineNode::Bold(inner));
+            return Some(Node::Bold(Bold { children: inner }));
         }
 
         // Otherwise we bail, rewind and let the next loop handle each token
         // be handled as normal text or other inline elements
         self.rewind(rewind_position);
         self.consume(&Token::Star);
-        Some(InlineNode::Text(Token::Star.literal()))
+        Some(Node::Text(Token::Star.literal()))
     }
 
     fn consume(&mut self, kind: &Token) -> &Token {

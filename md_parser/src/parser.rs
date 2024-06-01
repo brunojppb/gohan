@@ -56,6 +56,15 @@ use std::cmp::max;
 // title = ? any string ? ;
 // alt_text = ? any string ? ;
 
+// The given parent of an element when recursing
+// on inner elements. Helpful for controlling whether
+// we allow some types of elements to have chidren elements
+#[derive(PartialEq, Eq)]
+enum Parent {
+    Block,
+    Inline,
+}
+
 /// Recursive Descent Parser for transforming
 /// the given list of tokens a DOM AST
 pub struct Parser<'source> {
@@ -80,8 +89,8 @@ impl<'source> Parser<'source> {
     }
 
     fn block(&mut self) -> Option<Node<'source>> {
-        while self.check(Token::Newline) {
-            self.consume(Token::Newline);
+        while self.check(&Token::Newline) {
+            self.consume(&Token::Newline);
         }
 
         // Headings can only start as the very first token in a line
@@ -102,7 +111,7 @@ impl<'source> Parser<'source> {
 
         if heading_level > 0 && heading_level <= 6 && self.match_token(Token::Space) {
             let mut inline_elements = Vec::new();
-            while let Some(inline) = self.inline() {
+            while let Some(inline) = self.inline(Parent::Block) {
                 if inline == InlineNode::LineBreak {
                     break;
                 }
@@ -129,13 +138,13 @@ impl<'source> Parser<'source> {
         // @TODO: Add newlines before paragraphs as linebreak nodes?
         // So we just consume newlines outside of a paragraph and discard them.
         // I might need to revisit this and add Linebreak as a inline node?
-        while self.check(Token::Newline) && !self.is_at_end() {
-            self.consume(Token::Newline);
+        while self.check(&Token::Newline) && !self.is_at_end() {
+            self.consume(&Token::Newline);
         }
 
         let mut inline_elements = Vec::new();
 
-        while let Some(inline) = self.inline() {
+        while let Some(inline) = self.inline(Parent::Block) {
             inline_elements.push(inline);
         }
 
@@ -146,19 +155,21 @@ impl<'source> Parser<'source> {
         Some(Node::Block(BlockNode::Paragraph(inline_elements)))
     }
 
-    fn inline(&mut self) -> Option<InlineNode<'source>> {
+    fn inline(&mut self, parent: Parent) -> Option<InlineNode<'source>> {
         if self.is_at_end() {
             return None;
         }
 
         if let Some((token, _)) = self.peek() {
             let node = match token {
-                Token::Star => return self.maybe_bold(),
-                Token::LeftSquareBracket => return self.maybe_link(),
+                // Two consecutive newlines should break off from any inline elements
+                // and give it a chance to a new block or inline element to be constructed
                 Token::Newline if self.check_next(Token::Newline) => {
                     return None;
                 }
                 Token::Newline => InlineNode::LineBreak,
+                Token::Star => return self.maybe_bold(),
+                Token::LeftSquareBracket if parent == Parent::Block => return self.maybe_link(),
                 Token::Text(_)
                 | Token::Digit(_)
                 | Token::Space
@@ -169,6 +180,7 @@ impl<'source> Parser<'source> {
                 | Token::Hash
                 | Token::LeftParen
                 | Token::RightParen
+                | Token::LeftSquareBracket
                 | Token::RightSquareBracket
                 | Token::Backslash => InlineNode::Text(token.literal()),
                 t if t.is_block_level_token() => return None,
@@ -191,8 +203,13 @@ impl<'source> Parser<'source> {
             while let Some((next, _)) = self.advance() {
                 match next {
                     Token::LeftSquareBracket if markers == [0, 0, 0, 0] => markers[0] = 1,
-                    Token::RightSquareBracket if markers == [1, 0, 0, 0] => markers[1] = 1,
-                    Token::LeftParen if markers == [1, 1, 0, 0] => markers[2] = 1,
+                    // The closing text of a link must be followed by "]("
+                    Token::RightSquareBracket if markers == [1, 0, 0, 0] => {
+                        if self.peek_token().is_some_and(|t| t == &Token::LeftParen) {
+                            markers[1] = 1;
+                            markers[2] = 1;
+                        }
+                    }
                     Token::RightParen if markers == [1, 1, 1, 0] => markers[3] = 1,
                     token if token == &Token::Newline => {
                         if let Some(&(Token::Newline, _)) = self.peek() {
@@ -209,37 +226,38 @@ impl<'source> Parser<'source> {
         // We are guaranteed to have a well-structured link here
         // lets force-consume all the special tokens
         if markers == [1, 1, 1, 1] {
-            self.consume(Token::LeftSquareBracket);
+            self.consume(&Token::LeftSquareBracket);
 
             let mut link_text = Vec::new();
-            while !self.check(Token::RightSquareBracket) && !self.is_at_end() {
-                if let Some(inline) = self.inline() {
+
+            while !self.check(&Token::RightSquareBracket) && !self.is_at_end() {
+                if let Some(inline) = self.inline(Parent::Inline) {
                     link_text.push(inline);
                 } else {
                     break;
                 }
             }
 
-            self.consume(Token::RightSquareBracket);
-            self.consume(Token::LeftParen);
+            self.consume(&Token::RightSquareBracket);
+            self.consume(&Token::LeftParen);
 
             let mut url = Vec::new();
-            while !self.check(Token::RightParen) && !self.is_at_end() {
-                if let Some(inline) = self.inline() {
+            while !self.check(&Token::RightParen) && !self.is_at_end() {
+                if let Some(inline) = self.inline(Parent::Inline) {
                     url.push(inline);
                 } else {
                     break;
                 }
             }
 
-            self.consume(Token::RightParen);
+            self.consume(&Token::RightParen);
 
             return Some(InlineNode::Link(link_text, url));
         }
 
-        // Otherwise we bail, rewind and let the next loop handle each token
-        // be handled as normal text or other inline elements
-        self.consume(Token::LeftSquareBracket);
+        // Otherwise we bail, rewind and let the next loop handle
+        // each token as as normal text or other inline elements
+        self.consume(&Token::LeftSquareBracket);
         Some(InlineNode::Text(Token::LeftSquareBracket.literal()))
     }
 
@@ -250,7 +268,7 @@ impl<'source> Parser<'source> {
             while let Some((next, _)) = self.advance() {
                 match next {
                     Token::Star => {
-                        if let Some(&(Token::Star, _)) = self.peek() {
+                        if self.peek_token().is_some_and(|t| t == &Token::Star) {
                             if rewind_position == self.current - 1 {
                                 markers[0] = 1;
                             } else {
@@ -258,8 +276,9 @@ impl<'source> Parser<'source> {
                             }
                         }
                     }
+                    // Two consecutive newlines should break out from the inline element
                     token if token == &Token::Newline => {
-                        if let Some(&(Token::Newline, _)) = self.peek() {
+                        if self.peek_token().is_some_and(|t| t == &Token::Newline) {
                             break 'outer;
                         }
                     }
@@ -271,32 +290,32 @@ impl<'source> Parser<'source> {
         self.rewind(rewind_position);
 
         if markers == [1, 1] {
-            self.consume(Token::Star);
-            self.consume(Token::Star);
+            self.consume(&Token::Star);
+            self.consume(&Token::Star);
             let mut inner = Vec::new();
-            while !self.check(Token::Star) && !self.is_at_end() {
-                if let Some(inline) = self.inline() {
+            while !self.check(&Token::Star) && !self.is_at_end() {
+                if let Some(inline) = self.inline(Parent::Inline) {
                     inner.push(inline);
                 } else {
                     panic!("Invalid inline node for link URL component");
                 }
             }
             // Consume the wrapping "**" around bold tokens
-            self.consume(Token::Star);
-            self.consume(Token::Star);
+            self.consume(&Token::Star);
+            self.consume(&Token::Star);
             return Some(InlineNode::Bold(inner));
         }
 
         // Otherwise we bail, rewind and let the next loop handle each token
         // be handled as normal text or other inline elements
         self.rewind(rewind_position);
-        self.consume(Token::Star);
+        self.consume(&Token::Star);
         Some(InlineNode::Text(Token::Star.literal()))
     }
 
-    fn consume(&mut self, kind: Token) -> &Token {
+    fn consume(&mut self, kind: &Token) -> &Token {
         if let Some(token) = self.advance() {
-            if token.0 == kind {
+            if token.0 == *kind {
                 return &token.0;
             }
 
@@ -339,14 +358,21 @@ impl<'source> Parser<'source> {
         self.tokens.get(self.current)
     }
 
+    fn peek_token(&self) -> Option<&Token> {
+        match self.peek() {
+            Some((token, _)) => Some(token),
+            None => None,
+        }
+    }
+
     /// Get the next token in line, but do not consume it
     fn peek_next(&self) -> Option<&(Token<'source>, Span)> {
         self.tokens.get(self.current + 1)
     }
 
     /// Compare the current token, but do not consume it.
-    fn check(&self, token: Token) -> bool {
-        self.peek().is_some_and(|t| t.0 == token)
+    fn check(&self, token: &Token) -> bool {
+        self.peek().is_some_and(|t| t.0 == *token)
     }
 
     /// Compare the given token to the next one in line
@@ -362,7 +388,7 @@ impl<'source> Parser<'source> {
             return false;
         }
 
-        if self.check(expected) {
+        if self.check(&expected) {
             self.advance();
             return true;
         }

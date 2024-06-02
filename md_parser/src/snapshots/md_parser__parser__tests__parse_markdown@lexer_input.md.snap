@@ -5,26 +5,24 @@ input_file: md_parser/src/snapshot_inputs/lexer_input.md
 ---
 [
   {
-    "Block": {
-      "Heading": [
-        1,
-        [
-          {
-            "Text": "Hi"
-          },
-          {
-            "Text": " "
-          },
-          {
-            "Text": "there"
-          }
-        ]
+    "Header": {
+      "level": 1,
+      "children": [
+        {
+          "Text": "Hi"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "there"
+        }
       ]
     }
   },
   {
-    "Block": {
-      "Paragraph": [
+    "Paragraph": {
+      "children": [
         {
           "Text": "This"
         },
@@ -90,23 +88,25 @@ input_file: md_parser/src/snapshot_inputs/lexer_input.md
         },
         "LineBreak",
         {
-          "Bold": [
-            {
-              "Text": "bold"
-            },
-            {
-              "Text": " "
-            },
-            {
-              "Text": "text"
-            },
-            {
-              "Text": " "
-            },
-            {
-              "Text": "here"
-            }
-          ]
+          "Bold": {
+            "children": [
+              {
+                "Text": "bold"
+              },
+              {
+                "Text": " "
+              },
+              {
+                "Text": "text"
+              },
+              {
+                "Text": " "
+              },
+              {
+                "Text": "here"
+              }
+            ]
+          }
         },
         {
           "Text": " "
@@ -130,8 +130,8 @@ input_file: md_parser/src/snapshot_inputs/lexer_input.md
           "Text": " "
         },
         {
-          "Link": [
-            [
+          "Link": {
+            "children": [
               {
                 "Text": "link"
               },
@@ -142,7 +142,7 @@ input_file: md_parser/src/snapshot_inputs/lexer_input.md
                 "Text": "here"
               }
             ],
-            [
+            "url": [
               {
                 "Text": "https://bpaulino"
               },
@@ -153,7 +153,7 @@ input_file: md_parser/src/snapshot_inputs/lexer_input.md
                 "Text": "com"
               }
             ]
-          ]
+          }
         },
         {
           "Text": " "

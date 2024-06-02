@@ -5,38 +5,36 @@ input_file: md_parser/src/snapshot_inputs/input2.md
 ---
 [
   {
-    "Block": {
-      "Heading": [
-        3,
-        [
-          {
-            "Text": "Article"
-          },
-          {
-            "Text": " "
-          },
-          {
-            "Text": "of"
-          },
-          {
-            "Text": " "
-          },
-          {
-            "Text": "the"
-          },
-          {
-            "Text": " "
-          },
-          {
-            "Text": "week"
-          }
-        ]
+    "Header": {
+      "level": 3,
+      "children": [
+        {
+          "Text": "Article"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "of"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "the"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "week"
+        }
       ]
     }
   },
   {
-    "Block": {
-      "Paragraph": [
+    "Paragraph": {
+      "children": [
         {
           "Text": "In"
         },
@@ -68,8 +66,8 @@ input_file: md_parser/src/snapshot_inputs/input2.md
           "Text": " "
         },
         {
-          "Link": [
-            [
+          "Link": {
+            "children": [
               {
                 "Text": "Prater"
               },
@@ -80,7 +78,7 @@ input_file: md_parser/src/snapshot_inputs/input2.md
                 "Text": "Park"
               }
             ],
-            [
+            "url": [
               {
                 "Text": "https://www"
               },
@@ -97,7 +95,7 @@ input_file: md_parser/src/snapshot_inputs/input2.md
                 "Text": "com/en/home"
               }
             ]
-          ]
+          }
         },
         {
           "Text": " "
@@ -203,11 +201,13 @@ input_file: md_parser/src/snapshot_inputs/input2.md
           "Text": " "
         },
         {
-          "Bold": [
-            {
-              "Text": "seasons"
-            }
-          ]
+          "Bold": {
+            "children": [
+              {
+                "Text": "seasons"
+              }
+            ]
+          }
         },
         {
           "Text": "."
@@ -216,8 +216,8 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   },
   {
-    "Block": {
-      "Paragraph": [
+    "Paragraph": {
+      "children": [
         {
           "Text": "Particularly"
         },
@@ -255,11 +255,13 @@ input_file: md_parser/src/snapshot_inputs/input2.md
           "Text": " "
         },
         {
-          "Bold": [
-            {
-              "Text": "green"
-            }
-          ]
+          "Bold": {
+            "children": [
+              {
+                "Text": "green"
+              }
+            ]
+          }
         },
         {
           "Text": " "
@@ -280,20 +282,18 @@ input_file: md_parser/src/snapshot_inputs/input2.md
     }
   },
   {
-    "Block": {
-      "Heading": [
-        2,
-        [
-          {
-            "Text": "Another"
-          },
-          {
-            "Text": " "
-          },
-          {
-            "Text": "header"
-          }
-        ]
+    "Header": {
+      "level": 2,
+      "children": [
+        {
+          "Text": "Another"
+        },
+        {
+          "Text": " "
+        },
+        {
+          "Text": "header"
+        }
       ]
     }
   }

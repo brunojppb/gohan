@@ -64,6 +64,8 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    /// A token can only be within the ASCII space
+    /// and must belong into our list of reserved symbols
     fn is_token(&self, c: Option<u8>) -> bool {
         match c {
             Some(c) => {

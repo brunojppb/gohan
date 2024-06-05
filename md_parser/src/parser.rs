@@ -416,6 +416,7 @@ struct LinkMarker {
     end_url: Option<usize>,
 }
 
+/// helful for holding the boundaries of a Link element during parsing
 impl LinkMarker {
     fn new() -> Self {
         Self {
@@ -470,10 +471,11 @@ impl LinkMarker {
             && self.end_url.is_none()
     }
 
+    /// given a complete link, extract the ranges of its inner components
     fn ranges(&self) -> Option<(Range<usize>, Range<usize>)> {
         match (self.start_text, self.end_text, self.start_url, self.end_url) {
-            (Some(start), Some(end), Some(url_start), Some(url_end)) => {
-                Some((start..end, url_start..url_end))
+            (Some(text_start), Some(text_end), Some(url_start), Some(url_end)) => {
+                Some((text_start..text_end, url_start..url_end))
             }
             _ => None,
         }

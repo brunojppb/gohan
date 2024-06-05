@@ -269,53 +269,76 @@ impl<'source> Parser<'source> {
     }
 
     fn maybe_bold(&mut self) -> Option<Node<'source>> {
-        let mut markers: [u8; 2] = [0, 0];
         let rewind_position = self.current;
-        'outer: while markers != [1, 1] && !self.is_at_end() {
-            while let Some((next, _)) = self.advance() {
+        let mut marker = InlineMarker::new();
+        let mut steps = 0;
+
+        while !marker.is_closed() && !self.is_at_end() {
+            steps += 1;
+            if let Some((next, _)) = self.advance() {
                 match next {
                     Token::Star => {
-                        if self.peek_token().is_some_and(|t| t == &Token::Star) {
-                            if rewind_position == self.current - 1 {
-                                markers[0] = 1;
+                        if self.check(&Token::Star) {
+                            if marker.is_empty()
+                                && !self.peek_next_token().is_some_and(|t| {
+                                    t == &Token::Space
+                                        || t == &Token::Newline
+                                        || t == &Token::EndOfFile
+                                })
+                            {
+                                marker.open(self.current + 1);
+                            } else if marker.is_open()
+                                && !self.tokens.get(self.current - 2).is_some_and(|(t, _)| {
+                                    t == &Token::Space
+                                        || t == &Token::Newline
+                                        || t == &Token::EndOfFile
+                                })
+                            {
+                                marker.close(self.current - 1);
+                                steps += 1;
+                                break;
                             } else {
-                                markers[1] = 1;
+                                break;
                             }
                         }
                     }
                     // Two consecutive newlines should break out from the inline element
-                    token if token == &Token::Newline => {
-                        if self.peek_token().is_some_and(|t| t == &Token::Newline) {
-                            break 'outer;
+                    Token::Newline => {
+                        if self.check_next(Token::Newline) {
+                            break;
                         }
                     }
-                    _ => {}
+
+                    // If we enter the potential inner elements of bold element
+                    // and they are not following a `**`, this is not a bold element.
+                    _t if marker.is_empty() => break,
+
+                    // Any other token should move along as they can be nested within
+                    // the bold text as just text or inner inline elements
+                    _t => {}
                 };
             }
         }
 
         self.rewind(rewind_position);
 
-        if markers == [1, 1] {
-            self.consume(&Token::Star);
-            self.consume(&Token::Star);
-            let mut inner = Vec::new();
-            while !self.check(&Token::Star) && !self.is_at_end() {
-                if let Some(inline) = self.inline() {
-                    inner.push(inline);
-                } else {
-                    panic!("Invalid inline node for link URL component");
-                }
-            }
-            // Consume the wrapping "**" around bold tokens
-            self.consume(&Token::Star);
-            self.consume(&Token::Star);
-            return Some(Node::Bold(Bold { children: inner }));
+        // At this point, we are sure we have a bold element.
+        if let Some(bold_text_range) = marker.range() {
+            let t = &self.tokens[bold_text_range];
+            let mut text_parser = Self::new(t);
+            let text_nodes = text_parser.parse_inline();
+
+            self.current += steps;
+
+            let bold = Node::Bold(Bold {
+                children: text_nodes,
+            });
+
+            return Some(bold);
         }
 
         // Otherwise we bail, rewind and let the next loop handle each token
         // be handled as normal text or other inline elements
-        self.rewind(rewind_position);
         self.consume(&Token::Star);
         Some(Node::Text(Token::Star.literal()))
     }
@@ -367,6 +390,13 @@ impl<'source> Parser<'source> {
 
     fn peek_token(&self) -> Option<&Token> {
         match self.peek() {
+            Some((token, _)) => Some(token),
+            None => None,
+        }
+    }
+
+    fn peek_next_token(&self) -> Option<&Token> {
+        match self.peek_next() {
             Some((token, _)) => Some(token),
             None => None,
         }
@@ -477,6 +507,48 @@ impl LinkMarker {
             (Some(text_start), Some(text_end), Some(url_start), Some(url_end)) => {
                 Some((text_start..text_end, url_start..url_end))
             }
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug)]
+struct InlineMarker {
+    start: Option<usize>,
+    end: Option<usize>,
+}
+
+impl InlineMarker {
+    fn new() -> Self {
+        Self {
+            start: None,
+            end: None,
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.start.is_none() && self.end.is_none()
+    }
+
+    fn is_open(&self) -> bool {
+        self.start.is_some() && self.end.is_none()
+    }
+
+    fn is_closed(&self) -> bool {
+        self.start.is_some() && self.end.is_some()
+    }
+
+    fn open(&mut self, index: usize) {
+        self.start = Some(index);
+    }
+
+    fn close(&mut self, index: usize) {
+        self.end = Some(index);
+    }
+
+    fn range(&self) -> Option<Range<usize>> {
+        match (self.start, self.end) {
+            (Some(start), Some(end)) => Some(start..end),
             _ => None,
         }
     }

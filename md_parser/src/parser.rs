@@ -2,6 +2,7 @@ use crate::ast::{Bold, Header, Link, Node, Paragraph};
 use crate::token::{Span, Token};
 
 use std::cmp::max;
+use std::ops::Range;
 
 // Markdown Grammar
 // (* A document is a series of blocks *)
@@ -56,24 +57,15 @@ use std::cmp::max;
 // title = ? any string ? ;
 // alt_text = ? any string ? ;
 
-// The given parent of an element when recursing
-// on inner elements. Helpful for controlling whether
-// we allow some types of elements to have chidren elements
-#[derive(PartialEq, Eq)]
-enum Parent {
-    Block,
-    Inline,
-}
-
 /// Recursive Descent Parser for transforming
 /// the given list of tokens a DOM AST
 pub struct Parser<'source> {
     current: usize,
-    tokens: &'source Vec<(Token<'source>, Span)>,
+    tokens: &'source [(Token<'source>, Span)],
 }
 
 impl<'source> Parser<'source> {
-    pub fn new(tokens: &'source Vec<(Token<'source>, Span)>) -> Self {
+    pub fn new(tokens: &'source [(Token<'source>, Span)]) -> Self {
         Self { tokens, current: 0 }
     }
 
@@ -81,6 +73,21 @@ impl<'source> Parser<'source> {
         let mut nodes: Vec<Node<'source>> = Vec::new();
         while !self.is_at_end() {
             if let Some(node) = self.block() {
+                nodes.push(node);
+            }
+        }
+
+        nodes
+    }
+
+    /// Parser step for nested inline elements only.
+    /// Helpful for cases where we want to restrict parsing
+    /// for within a specific range of tokens within another inline element.
+    /// e.g. Links containing bold text and other allowed inline elements
+    fn parse_inline(&mut self) -> Vec<Node<'source>> {
+        let mut nodes = Vec::new();
+        while !self.is_at_end() {
+            if let Some(node) = self.inline() {
                 nodes.push(node);
             }
         }
@@ -111,7 +118,7 @@ impl<'source> Parser<'source> {
 
         if heading_level > 0 && heading_level <= 6 && self.match_token(Token::Space) {
             let mut inline_elements = Vec::new();
-            while let Some(inline) = self.inline(Parent::Block) {
+            while let Some(inline) = self.inline() {
                 if inline == Node::LineBreak {
                     break;
                 }
@@ -144,7 +151,7 @@ impl<'source> Parser<'source> {
 
         let mut inline_elements = Vec::new();
 
-        while let Some(inline) = self.inline(Parent::Block) {
+        while let Some(inline) = self.inline() {
             inline_elements.push(inline);
         }
 
@@ -157,13 +164,18 @@ impl<'source> Parser<'source> {
         }))
     }
 
-    fn inline(&mut self, parent: Parent) -> Option<Node<'source>> {
+    fn inline(&mut self) -> Option<Node<'source>> {
         if self.is_at_end() {
             return None;
         }
 
         if let Some((token, _)) = self.peek() {
             let node = match token {
+                // Hitting end of the file, just advance and halt
+                Token::EndOfFile => {
+                    self.advance();
+                    return None;
+                }
                 // Two consecutive newlines should break off from any inline elements
                 // and give it a chance to a new block or inline element to be constructed
                 Token::Newline if self.check_next(Token::Newline) => {
@@ -171,7 +183,7 @@ impl<'source> Parser<'source> {
                 }
                 Token::Newline => Node::LineBreak,
                 Token::Star => return self.maybe_bold(),
-                Token::LeftSquareBracket if parent == Parent::Block => return self.maybe_link(),
+                Token::LeftSquareBracket => return self.maybe_link(),
                 Token::Text(_)
                 | Token::Digit(_)
                 | Token::Space
@@ -182,11 +194,12 @@ impl<'source> Parser<'source> {
                 | Token::Hash
                 | Token::LeftParen
                 | Token::RightParen
-                | Token::LeftSquareBracket
                 | Token::RightSquareBracket
                 | Token::Backslash => Node::Text(token.literal()),
+                // block-level tokens should be interpreted outside of the inline loop
+                // to give them a chance of being interpreted as block-level elements
                 t if t.is_block_level_token() => return None,
-                t => todo!("unhandled token: {}", t),
+                t => todo!("Token not handled yet: {}", t),
             };
             self.advance();
             return Some(node);
@@ -196,26 +209,32 @@ impl<'source> Parser<'source> {
     }
 
     fn maybe_link(&mut self) -> Option<Node<'source>> {
-        let mut markers: [u8; 4] = [0, 0, 0, 0];
+        let mut marker = LinkMarker::new();
         let rewind_position = self.current;
+        let mut steps = 0;
         // Any inline element can partially show-up and should be represented as text,
         // but if we find the right token makers that can complete a link, we should
         // rewind and structure it as a Link inline node instead.
-        'outer: while markers != [1, 1, 1, 1] && !self.is_at_end() {
-            while let Some((next, _)) = self.advance() {
+        while !marker.is_link() && !self.is_at_end() {
+            if let Some((next, _)) = self.advance() {
+                steps += 1;
                 match next {
-                    Token::LeftSquareBracket if markers == [0, 0, 0, 0] => markers[0] = 1,
+                    Token::LeftSquareBracket if marker.is_empty() => {
+                        marker.set_start_text(self.current)
+                    }
                     // The closing text of a link must be followed by "]("
-                    Token::RightSquareBracket if markers == [1, 0, 0, 0] => {
+                    Token::RightSquareBracket if marker.has_open_text() => {
                         if self.peek_token().is_some_and(|t| t == &Token::LeftParen) {
-                            markers[1] = 1;
-                            markers[2] = 1;
+                            marker.set_end_text(self.current - 1);
+                            marker.set_start_url(self.current + 1);
                         }
                     }
-                    Token::RightParen if markers == [1, 1, 1, 0] => markers[3] = 1,
+                    Token::RightParen if marker.has_open_url() => {
+                        marker.set_end_url(self.current - 1)
+                    }
                     token if token == &Token::Newline => {
                         if let Some(&(Token::Newline, _)) = self.peek() {
-                            break 'outer;
+                            break;
                         }
                     }
                     _ => {}
@@ -227,37 +246,20 @@ impl<'source> Parser<'source> {
 
         // We are guaranteed to have a well-structured link here
         // lets force-consume all the special tokens
-        if markers == [1, 1, 1, 1] {
-            self.consume(&Token::LeftSquareBracket);
+        if let Some((text_range, url_range)) = marker.ranges() {
+            let mut text_parser = Self::new(&self.tokens[text_range]);
+            let text_nodes = text_parser.parse_inline();
 
-            let mut link_text = Vec::new();
+            let mut url_parser = Self::new(&self.tokens[url_range]);
+            let url_nodes = url_parser.parse_inline();
+            self.current += steps;
 
-            while !self.check(&Token::RightSquareBracket) && !self.is_at_end() {
-                if let Some(inline) = self.inline(Parent::Inline) {
-                    link_text.push(inline);
-                } else {
-                    break;
-                }
-            }
+            let link = Node::Link(Link {
+                children: text_nodes,
+                url: url_nodes,
+            });
 
-            self.consume(&Token::RightSquareBracket);
-            self.consume(&Token::LeftParen);
-
-            let mut url = Vec::new();
-            while !self.check(&Token::RightParen) && !self.is_at_end() {
-                if let Some(inline) = self.inline(Parent::Inline) {
-                    url.push(inline);
-                } else {
-                    break;
-                }
-            }
-
-            self.consume(&Token::RightParen);
-
-            return Some(Node::Link(Link {
-                children: link_text,
-                url,
-            }));
+            return Some(link);
         }
 
         // Otherwise we bail, rewind and let the next loop handle
@@ -299,7 +301,7 @@ impl<'source> Parser<'source> {
             self.consume(&Token::Star);
             let mut inner = Vec::new();
             while !self.check(&Token::Star) && !self.is_at_end() {
-                if let Some(inline) = self.inline(Parent::Inline) {
+                if let Some(inline) = self.inline() {
                     inner.push(inline);
                 } else {
                     panic!("Invalid inline node for link URL component");
@@ -402,10 +404,79 @@ impl<'source> Parser<'source> {
     }
 
     fn is_at_end(&self) -> bool {
-        self.tokens
-            .get(self.current)
-            .filter(|t| t.0 == Token::EndOfFile)
-            .is_some()
+        self.current >= self.tokens.len()
+    }
+}
+
+#[derive(Debug)]
+struct LinkMarker {
+    start_text: Option<usize>,
+    end_text: Option<usize>,
+    start_url: Option<usize>,
+    end_url: Option<usize>,
+}
+
+impl LinkMarker {
+    fn new() -> Self {
+        Self {
+            start_text: None,
+            end_text: None,
+            start_url: None,
+            end_url: None,
+        }
+    }
+
+    fn set_start_text(&mut self, index: usize) {
+        self.start_text = Some(index);
+    }
+
+    fn set_end_text(&mut self, index: usize) {
+        self.end_text = Some(index);
+    }
+
+    fn set_start_url(&mut self, index: usize) {
+        self.start_url = Some(index);
+    }
+
+    fn set_end_url(&mut self, index: usize) {
+        self.end_url = Some(index);
+    }
+
+    fn is_link(&self) -> bool {
+        self.start_text.is_some()
+            && self.end_text.is_some()
+            && self.start_url.is_some()
+            && self.end_url.is_some()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.start_text.is_none()
+            && self.end_text.is_none()
+            && self.start_url.is_none()
+            && self.end_url.is_none()
+    }
+
+    fn has_open_text(&self) -> bool {
+        self.start_text.is_some()
+            && self.end_text.is_none()
+            && self.start_url.is_none()
+            && self.end_url.is_none()
+    }
+
+    fn has_open_url(&self) -> bool {
+        self.start_text.is_some()
+            && self.end_text.is_some()
+            && self.start_url.is_some()
+            && self.end_url.is_none()
+    }
+
+    fn ranges(&self) -> Option<(Range<usize>, Range<usize>)> {
+        match (self.start_text, self.end_text, self.start_url, self.end_url) {
+            (Some(start), Some(end), Some(url_start), Some(url_end)) => {
+                Some((start..end, url_start..url_end))
+            }
+            _ => None,
+        }
     }
 }
 

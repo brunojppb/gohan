@@ -322,25 +322,27 @@ impl<'source> Parser<'source> {
 
         self.rewind(rewind_position);
 
-        // At this point, we are sure we have a bold element.
-        if let Some(bold_text_range) = marker.range() {
-            let t = &self.tokens[bold_text_range];
-            let mut text_parser = Self::new(t);
-            let text_nodes = text_parser.parse_inline();
+        match marker.range() {
+            Some(bold_text_range) if !bold_text_range.is_empty() => {
+                let t = &self.tokens[bold_text_range];
+                let mut text_parser = Self::new(t);
+                let text_nodes = text_parser.parse_inline();
 
-            self.current += steps;
+                self.current += steps;
 
-            let bold = Node::Bold(Bold {
-                children: text_nodes,
-            });
+                let bold = Node::Bold(Bold {
+                    children: text_nodes,
+                });
 
-            return Some(bold);
+                Some(bold)
+            }
+            _ => {
+                // Otherwise we bail, rewind and let the next loop handle each token
+                // be handled as normal text or other inline elements
+                self.consume(&Token::Star);
+                Some(Node::Text(Token::Star.literal()))
+            }
         }
-
-        // Otherwise we bail, rewind and let the next loop handle each token
-        // be handled as normal text or other inline elements
-        self.consume(&Token::Star);
-        Some(Node::Text(Token::Star.literal()))
     }
 
     fn consume(&mut self, kind: &Token) -> &Token {

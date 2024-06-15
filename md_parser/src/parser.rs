@@ -1,8 +1,8 @@
-use crate::ast::{Bold, Header, Link, Node, Paragraph};
+use crate::ast::{Header, Link, Node, Paragraph, Strong};
 use crate::token::{Span, Token};
 
+use crate::marker::{InlineMarker, LinkMarker};
 use std::cmp::max;
-use std::ops::Range;
 
 // Markdown Grammar
 // (* A document is a series of blocks *)
@@ -182,7 +182,7 @@ impl<'source> Parser<'source> {
                     return None;
                 }
                 Token::Newline => Node::LineBreak,
-                Token::Star => return self.maybe_bold(),
+                Token::Star => return self.maybe_strong(),
                 Token::LeftSquareBracket => return self.maybe_link(),
                 Token::Text(_)
                 | Token::Digit(_)
@@ -268,7 +268,7 @@ impl<'source> Parser<'source> {
         Some(Node::Text(Token::LeftSquareBracket.literal()))
     }
 
-    fn maybe_bold(&mut self) -> Option<Node<'source>> {
+    fn maybe_strong(&mut self) -> Option<Node<'source>> {
         let rewind_position = self.current;
         let mut marker = InlineMarker::new();
         let mut steps = 0;
@@ -323,20 +323,20 @@ impl<'source> Parser<'source> {
         self.rewind(rewind_position);
 
         match marker.range() {
-            Some(bold_text_range) if !bold_text_range.is_empty() => {
+            Some(bold_text_range) => {
                 let t = &self.tokens[bold_text_range];
                 let mut text_parser = Self::new(t);
                 let text_nodes = text_parser.parse_inline();
 
                 self.current += steps;
 
-                let bold = Node::Bold(Bold {
+                let strong = Node::Strong(Strong {
                     children: text_nodes,
                 });
 
-                Some(bold)
+                Some(strong)
             }
-            _ => {
+            None => {
                 // Otherwise we bail, rewind and let the next loop handle each token
                 // be handled as normal text or other inline elements
                 self.consume(&Token::Star);
@@ -437,122 +437,6 @@ impl<'source> Parser<'source> {
 
     fn is_at_end(&self) -> bool {
         self.current >= self.tokens.len()
-    }
-}
-
-#[derive(Debug)]
-struct LinkMarker {
-    start_text: Option<usize>,
-    end_text: Option<usize>,
-    start_url: Option<usize>,
-    end_url: Option<usize>,
-}
-
-/// helful for holding the boundaries of a Link element during parsing
-impl LinkMarker {
-    fn new() -> Self {
-        Self {
-            start_text: None,
-            end_text: None,
-            start_url: None,
-            end_url: None,
-        }
-    }
-
-    fn set_start_text(&mut self, index: usize) {
-        self.start_text = Some(index);
-    }
-
-    fn set_end_text(&mut self, index: usize) {
-        self.end_text = Some(index);
-    }
-
-    fn set_start_url(&mut self, index: usize) {
-        self.start_url = Some(index);
-    }
-
-    fn set_end_url(&mut self, index: usize) {
-        self.end_url = Some(index);
-    }
-
-    fn is_link(&self) -> bool {
-        self.start_text.is_some()
-            && self.end_text.is_some()
-            && self.start_url.is_some()
-            && self.end_url.is_some()
-    }
-
-    fn is_empty(&self) -> bool {
-        self.start_text.is_none()
-            && self.end_text.is_none()
-            && self.start_url.is_none()
-            && self.end_url.is_none()
-    }
-
-    fn has_open_text(&self) -> bool {
-        self.start_text.is_some()
-            && self.end_text.is_none()
-            && self.start_url.is_none()
-            && self.end_url.is_none()
-    }
-
-    fn has_open_url(&self) -> bool {
-        self.start_text.is_some()
-            && self.end_text.is_some()
-            && self.start_url.is_some()
-            && self.end_url.is_none()
-    }
-
-    /// given a complete link, extract the ranges of its inner components
-    fn ranges(&self) -> Option<(Range<usize>, Range<usize>)> {
-        match (self.start_text, self.end_text, self.start_url, self.end_url) {
-            (Some(text_start), Some(text_end), Some(url_start), Some(url_end)) => {
-                Some((text_start..text_end, url_start..url_end))
-            }
-            _ => None,
-        }
-    }
-}
-
-#[derive(Debug)]
-struct InlineMarker {
-    start: Option<usize>,
-    end: Option<usize>,
-}
-
-impl InlineMarker {
-    fn new() -> Self {
-        Self {
-            start: None,
-            end: None,
-        }
-    }
-
-    fn is_empty(&self) -> bool {
-        self.start.is_none() && self.end.is_none()
-    }
-
-    fn is_open(&self) -> bool {
-        self.start.is_some() && self.end.is_none()
-    }
-
-    fn is_closed(&self) -> bool {
-        self.start.is_some() && self.end.is_some()
-    }
-
-    fn open(&mut self, index: usize) {
-        self.start = Some(index);
-    }
-
-    fn close(&mut self, index: usize) {
-        self.end = Some(index);
-    }
-
-    fn range(&self) -> Option<Range<usize>> {
-        match (self.start, self.end) {
-            (Some(start), Some(end)) => Some(start..end),
-            _ => None,
-        }
     }
 }
 

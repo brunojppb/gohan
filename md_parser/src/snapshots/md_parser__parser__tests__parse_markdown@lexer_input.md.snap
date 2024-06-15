@@ -88,7 +88,7 @@ input_file: md_parser/src/snapshot_inputs/lexer_input.md
         },
         "LineBreak",
         {
-          "Bold": {
+          "Strong": {
             "children": [
               {
                 "Text": "bold"

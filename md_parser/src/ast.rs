@@ -5,8 +5,8 @@ pub enum Node<'s> {
     Header(Header<'s>),
     Paragraph(Paragraph<'s>),
     Link(Link<'s>),
-    Bold(Bold<'s>),
-    Italic(Italic<'s>),
+    Strong(Strong<'s>),
+    Emphasis(Emphasis<'s>),
     Digit(&'s str),
     Text(&'s str),
     LineBreak,
@@ -36,13 +36,13 @@ pub struct Link<'s> {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Bold<'s> {
+pub struct Strong<'s> {
     #[serde(borrow)]
     pub children: Vec<Node<'s>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Italic<'s> {
+pub struct Emphasis<'s> {
     #[serde(borrow)]
     pub children: Vec<Node<'s>>,
 }

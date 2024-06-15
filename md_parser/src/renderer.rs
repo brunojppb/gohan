@@ -59,14 +59,14 @@ fn visit_block(buffer: &mut String, node: &Node) {
 fn visit_inline(buffer: &mut String, node: &Node) {
     match node {
         Node::Text(txt) => buffer.push_str(txt),
-        Node::Bold(bold) => {
+        Node::Strong(strong) => {
             buffer.push_str("<strong>");
-            visit_inline_nodes(buffer, &bold.children);
+            visit_inline_nodes(buffer, &strong.children);
             buffer.push_str("</strong>");
         }
         Node::Digit(d) => buffer.push_str(d),
         Node::LineBreak => buffer.push_str("<br>"),
-        Node::Italic(italic) => {
+        Node::Emphasis(italic) => {
             buffer.push_str("<em>");
             visit_inline_nodes(buffer, &italic.children);
             buffer.push_str("</em>");
